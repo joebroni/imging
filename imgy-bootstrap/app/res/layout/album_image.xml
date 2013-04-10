@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+                android:background="#333">
+    <com.loopj.android.image.SmartImageView android:layout_width="fill_parent"
+                                            android:layout_height="wrap_content"
+                                            android:id="@+id/imgImage"
+                                            android:scaleType="fitCenter"
+        />
+    <WebView android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/gifView"
+             android:background="#333"
+             android:visibility="gone"/>
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/info"
+                  android:background="@drawable/bottom_gradient"
+                  android:layout_alignParentBottom="true"
+                  android:gravity="center"
+        >
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/caption"
+                  android:layout_weight="1"
+                  android:text="This is the caption for the image."
+                  android:textColor="#fff"
+                  android:padding="20dp"/>
+    </LinearLayout>
+
+</LinearLayout>

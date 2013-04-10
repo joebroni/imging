@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="fill_parent"
+            android:background="#333">
+    <com.loopj.android.image.SmartImageView android:layout_width="fill_parent"
+               android:layout_height="fill_parent"
+               android:id="@+id/imgImage"
+               android:scaleType="fitCenter"
+               />
+    <WebView android:layout_width="fill_parent"
+                                     android:layout_height="wrap_content"
+                                     android:id="@+id/gifView"
+                                     android:background="#333"
+                                     android:visibility="gone"/>
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/info"
+                  android:background="@drawable/bottom_gradient"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center"
+                    >
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/caption"
+                  android:layout_weight="1"
+                  android:text="This is the caption for the image."
+                  android:textColor="#fff"
+            android:padding="20dp"/>
+        <ImageButton android:layout_width="30dp"
+                     android:layout_height="30dp"
+                     android:id="@+id/upvote"
+                     android:src="@drawable/up_white_256"
+            android:scaleType="fitCenter"
+            android:background="#0000"/>
+        <ImageButton android:layout_width="30dp"
+                     android:layout_height="30dp"
+                     android:id="@+id/downvote"
+                     android:src="@drawable/down_white_256"
+                     android:scaleType="fitCenter"
+                     android:background="#0000"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+
+                  </LinearLayout>
+</RelativeLayout>
