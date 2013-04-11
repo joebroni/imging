@@ -1,7 +1,5 @@
 package com.corgrimm.imgy.ui;
 
-import static com.corgrimm.imgy.core.Constants.Extra.NEWS_ITEM;
-import static com.corgrimm.imgy.core.Constants.Extra.USER;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Intent;
@@ -9,17 +7,17 @@ import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
-
 import com.corgrimm.imgy.BootstrapServiceProvider;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.core.AvatarLoader;
-import com.corgrimm.imgy.core.News;
 import com.corgrimm.imgy.core.User;
 import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
 import com.google.inject.Inject;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.corgrimm.imgy.core.Constants.Extra.USER;
 
 public class UserListFragment  extends ItemListFragment<User> {
 

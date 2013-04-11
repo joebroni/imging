@@ -1,14 +1,11 @@
 package com.corgrimm.imgy.ui;
 
-import static com.corgrimm.imgy.core.Constants.Extra.NEWS_ITEM;
 import android.os.Bundle;
-import android.widget.TextView;
-
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.core.News;
-
 import roboguice.inject.InjectExtra;
-import roboguice.inject.InjectView;
+
+import static com.corgrimm.imgy.core.Constants.Extra.NEWS_ITEM;
 
 public class NewsActivity extends BootstrapActivity {
 
@@ -21,7 +18,7 @@ public class NewsActivity extends BootstrapActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.news);
+        setContentView(R.layout.image_list_fragment);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);

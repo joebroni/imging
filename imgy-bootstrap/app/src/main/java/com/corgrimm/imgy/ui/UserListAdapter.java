@@ -2,7 +2,6 @@ package com.corgrimm.imgy.ui;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.core.AvatarLoader;
 import com.corgrimm.imgy.core.User;

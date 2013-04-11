@@ -7,19 +7,19 @@ import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.corgrimm.imgy.core.News;
-import com.corgrimm.imgy.ui.CarouselActivity;
+import com.corgrimm.imgy.ui.ContentActivity;
 
 
 /**
  * Tests for displaying a specific {@link News} item
  */
-public class NewsViewTest extends ActivityInstrumentationTestCase2<CarouselActivity> {
+public class NewsViewTest extends ActivityInstrumentationTestCase2<ContentActivity> {
 
     /**
-     * Create test for {@link com.corgrimm.imgy.ui.CarouselActivity}
+     * Create test for {@link com.corgrimm.imgy.ui.ContentActivity}
      */
     public NewsViewTest() {
-        super(CarouselActivity.class);
+        super(ContentActivity.class);
     }
 
     /**

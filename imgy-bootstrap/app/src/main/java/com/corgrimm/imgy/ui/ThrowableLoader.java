@@ -2,8 +2,6 @@
 package com.corgrimm.imgy.ui;
 
 import android.content.Context;
-import android.util.Log;
-
 import roboguice.util.Ln;
 
 /**

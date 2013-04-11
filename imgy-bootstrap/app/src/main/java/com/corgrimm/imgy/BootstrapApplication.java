@@ -2,17 +2,16 @@
 
 package com.corgrimm.imgy;
 
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.FROYO;
 import android.app.Application;
 import android.app.Instrumentation;
 import android.content.Context;
-
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
-
 import roboguice.RoboGuice;
+
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.FROYO;
 
 /**
  * imgy application

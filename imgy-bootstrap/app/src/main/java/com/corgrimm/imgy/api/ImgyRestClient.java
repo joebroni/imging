@@ -5,11 +5,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.util.Log;
 import com.corgrimm.imgy.R;
+import com.google.inject.Inject;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -26,6 +25,11 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import static com.corgrimm.imgy.core.Constants.Prefs.AUTH_TOKEN;
+import static com.corgrimm.imgy.core.Constants.Prefs.PREFS_NAME;
+import static com.corgrimm.imgy.core.Constants.Prefs.TOKEN_EXPIRE;
+import static com.corgrimm.imgy.core.Constants.Oauth.*;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Anderson
@@ -33,6 +37,7 @@ import java.security.cert.X509Certificate;
  * Time: 7:49 AM
  */
 public class ImgyRestClient {
+    @Inject protected static SharedPreferences sharedPrefs;
 
     // production base urls
     public static final String IMGY_BASE_URL = "https://api.imgur.com/3/";
@@ -41,34 +46,8 @@ public class ImgyRestClient {
 
     public static void get(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 
-        try {
-            KeyStore trustStore = null;
-            try {
-                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
-            trustStore.load(null, null);
-            try {
-                client.setSSLSocketFactory(new MySSLSocketFactory(trustStore));
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (UnrecoverableKeyException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        }
-
-//        client.addHeader("Content-Type", "application/json");
-//        client.setUserAgent(getAgentString(context));
-        setHeaders();
+        setSocketFactory(client);
+        setHeaders(context, false);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -90,34 +69,30 @@ public class ImgyRestClient {
 
     public static void rawUrlGet(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 
-        try {
-            KeyStore trustStore = null;
-            try {
-                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
-            trustStore.load(null, null);
-            try {
-                client.setSSLSocketFactory(new MySSLSocketFactory(trustStore));
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (UnrecoverableKeyException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
+        setSocketFactory(client);
+        setHeaders(context, false);
+        if (!ImgyApi.CheckInternet(context)) {
+            AlertDialog alert = new AlertDialog.Builder(context).create();
+            alert.setTitle(context.getString(R.string.oops));
+            alert.setMessage(context.getString(R.string.error_no_connection));
+            alert.setButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    ((Activity) context).finish();
+                }
+            });
+            alert.show();
+//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
+        } else {
+            client.get(url, params, responseHandler);
+//            JLogger.getInstance(context).log("Jingit: Get url: " + url);
+            Log.d("IMGY", "Get raw url: " + url);
         }
-//        if (url.contains("/ws/"))
-//            url = url.replace("/ws/", "/json/");
-//        client.addHeader("Content-Type", "application/json");
-//        client.setUserAgent(getAgentString(context));
+    }
+
+    public static void rawUrlGetAuthenticated(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+
+        setSocketFactory(client);
+        setHeaders(context, true);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -159,30 +134,7 @@ public class ImgyRestClient {
     }
 
     public static void postWithBody(final Context context, String url, HttpEntity entity, String contentType, AsyncHttpResponseHandler responseHandler) {
-        try {
-            KeyStore trustStore = null;
-            try {
-                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
-            trustStore.load(null, null);
-            try {
-                client.setSSLSocketFactory(new MySSLSocketFactory(trustStore));
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (UnrecoverableKeyException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        }
+        setSocketFactory(client);
 //        client.setUserAgent(getAgentString(context));
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
@@ -247,30 +199,7 @@ public class ImgyRestClient {
 //    }
 
     public static void postRawUrlWithBody(final Context context, String url, HttpEntity entity, String contentType, AsyncHttpResponseHandler responseHandler) {
-        try {
-            KeyStore trustStore = null;
-            try {
-                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
-            trustStore.load(null, null);
-            try {
-                client.setSSLSocketFactory(new MySSLSocketFactory(trustStore));
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (UnrecoverableKeyException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        }
+        setSocketFactory(client);
 //        client.setUserAgent(getAgentString(context));
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
@@ -291,30 +220,7 @@ public class ImgyRestClient {
     }
 
     public static void postRawUrl(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        try {
-            KeyStore trustStore = null;
-            try {
-                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
-            trustStore.load(null, null);
-            try {
-                client.setSSLSocketFactory(new MySSLSocketFactory(trustStore));
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (UnrecoverableKeyException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        }
+        setSocketFactory(client);
 //        client.setUserAgent(getAgentString(context));
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
@@ -335,30 +241,7 @@ public class ImgyRestClient {
     }
 
     public static void deleteRawUrl(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        try {
-            KeyStore trustStore = null;
-            try {
-                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
-            trustStore.load(null, null);
-            try {
-                client.setSSLSocketFactory(new MySSLSocketFactory(trustStore));
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (UnrecoverableKeyException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        }
+        setSocketFactory(client);
 //        client.setUserAgent(getAgentString(context));
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
@@ -379,30 +262,7 @@ public class ImgyRestClient {
     }
 
     public static void putRawUrl(final Context context, String url, HttpEntity entity, String contentTyoe, AsyncHttpResponseHandler responseHandler) {
-        try {
-            KeyStore trustStore = null;
-            try {
-                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
-            trustStore.load(null, null);
-            try {
-                client.setSSLSocketFactory(new MySSLSocketFactory(trustStore));
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (UnrecoverableKeyException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        }
+         setSocketFactory(client);
 //        client.setUserAgent(getAgentString(context));
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
@@ -442,48 +302,45 @@ public class ImgyRestClient {
             return IMGY_BASE_URL +relativeUrl;
     }
 
-    private static void setHeaders() {
+    private static void setHeaders(Context context, Boolean authenticated) {
+
         client.addHeader("Accept", "application/json");
-        client.addHeader("Authorization", "Client-ID 8a24b67691c0319");
+        if (authenticated && ImgyApi.checkForValidAuthToken(context) == TOKEN_VALID) {
+            sharedPrefs = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+            String authToken = sharedPrefs.getString(AUTH_TOKEN, null);
+            client.addHeader("Authorization", String.format("Bearer %s", authToken));
+        }
+        else {
+            client.addHeader("Authorization", "Client-ID 8a24b67691c0319");
+        }
     }
 
-//    private static String getSecureAbsoluteUrl(Context context, String relativeUrl) {
-//
-//        if (environment == Constants.APPLICATION_ENVIRONMENT_PRODUCTION)
-//            return JINGIT_URL_SCHEME + JINGIT_DEBIT_CARD_HOST_PRODUCTION + relativeUrl;
-//        else if (environment == Constants.APPLICATION_ENVIRONMENT_SANDBOX)
-//            return JINGIT_URL_SCHEME + JINGIT_DEBIT_CARD_HOST_SANDBOX + relativeUrl;
-//        else if (environment == Constants.APPLICATION_ENVIRONMENT_TEST)
-//            return JINGIT_URL_SCHEME + JINGIT_DEBIT_CARD_HOST_TEST + relativeUrl;
-//        else if (environment == Constants.APPLICATION_ENVIRONMENT_PERF)
-//            return JINGIT_URL_SCHEME + JINGIT_DEBIT_CARD_HOST_PERF + relativeUrl;
-//        else
-//            return null;
-//    }
-
-//    private static String getAgentString(Context context) {
-//        String agentString;
-//        String strVersionCode = null;
-//        String strVersionName = null;
-//        try {
-//            PackageInfo packInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-//            strVersionCode = String.valueOf(packInfo.versionCode);
-//            strVersionName = packInfo.versionName;
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//            strVersionName = "Cannot load Version!";
-//            strVersionCode = "?";
-//        }
-//        String releaseString = Build.VERSION.RELEASE;
-//        if (DeviceInfo.isDeviceRooted()) {
-//            releaseString = releaseString + "*";
-//        }
-//
-//        agentString = "Jingit/" + strVersionName + " (" + Build.MODEL + "; Android; " + releaseString + ")";
-//
-//        return agentString;
-//    }
-
+    private static void setSocketFactory(AsyncHttpClient client) {
+        try {
+            KeyStore trustStore = null;
+            try {
+                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            }
+            trustStore.load(null, null);
+            try {
+                client.setSSLSocketFactory(new MySSLSocketFactory(trustStore));
+            } catch (KeyManagementException e) {
+                e.printStackTrace();
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            } catch (UnrecoverableKeyException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 

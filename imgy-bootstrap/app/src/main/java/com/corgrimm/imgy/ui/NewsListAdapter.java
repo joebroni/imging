@@ -1,10 +1,8 @@
 package com.corgrimm.imgy.ui;
 
 import android.view.LayoutInflater;
-
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.core.News;
-import com.corgrimm.imgy.ui.AlternatingColorListAdapter;
 
 import java.util.List;
 

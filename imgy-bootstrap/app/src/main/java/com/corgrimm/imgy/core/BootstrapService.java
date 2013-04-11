@@ -1,14 +1,6 @@
 
 package com.corgrimm.imgy.core;
 
-import static com.corgrimm.imgy.core.Constants.Http.HEADER_PARSE_APP_ID;
-import static com.corgrimm.imgy.core.Constants.Http.HEADER_PARSE_REST_API_KEY;
-import static com.corgrimm.imgy.core.Constants.Http.PARSE_APP_ID;
-import static com.corgrimm.imgy.core.Constants.Http.PARSE_REST_API_KEY;
-import static com.corgrimm.imgy.core.Constants.Http.URL_CHECKINS;
-import static com.corgrimm.imgy.core.Constants.Http.URL_NEWS;
-import static com.corgrimm.imgy.core.Constants.Http.URL_USERS;
-
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.google.gson.Gson;
@@ -19,6 +11,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
+
+import static com.corgrimm.imgy.core.Constants.Http.*;
 
 /**
  * Bootstrap API service

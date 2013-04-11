@@ -2,7 +2,6 @@
 package com.corgrimm.imgy;
 
 import android.accounts.AccountsException;
-
 import com.corgrimm.imgy.authenticator.ApiKeyProvider;
 import com.corgrimm.imgy.core.BootstrapService;
 import com.corgrimm.imgy.core.UserAgentProvider;

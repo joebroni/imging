@@ -1,15 +1,10 @@
 package com.corgrimm.imgy.ui;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.core.CheckIn;
-import com.corgrimm.imgy.core.News;
 
 import java.util.List;
-
-import roboguice.util.Strings;
 
 public class CheckInsListAdapter extends AlternatingColorListAdapter<CheckIn> {
     /**

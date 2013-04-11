@@ -2,10 +2,9 @@
 package com.corgrimm.imgy.ui;
 
 import android.view.LayoutInflater;
-
 import com.actionbarsherlock.R.color;
-import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
 import com.corgrimm.imgy.R.drawable;
+import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
 
 import java.util.List;
 

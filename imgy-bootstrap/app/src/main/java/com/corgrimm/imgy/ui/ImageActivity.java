@@ -1,12 +1,13 @@
 package com.corgrimm.imgy.ui;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.view.Menu;
@@ -14,9 +15,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
-import com.corgrimm.imgy.core.AvatarLoader;
 import com.corgrimm.imgy.models.Comment;
-import com.corgrimm.imgy.models.GalleryAlbum;
 import com.corgrimm.imgy.models.GalleryImage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,6 +32,7 @@ import roboguice.inject.InjectView;
 import java.io.IOException;
 import java.util.List;
 
+import static com.corgrimm.imgy.core.Constants.Extra.COMMENTS;
 import static com.corgrimm.imgy.core.Constants.Extra.IMAGE;
 import static com.corgrimm.imgy.core.Constants.Vote.*;
 
@@ -52,6 +52,7 @@ public class ImageActivity extends BootstrapActivity {
     protected  SlidingMenu menu;
     ListView menuList;
     protected int vote_status;
+    List<Comment> comments;
 
 
     @Override
@@ -94,7 +95,7 @@ public class ImageActivity extends BootstrapActivity {
                 try {
                     JSONArray jData = response.getJSONArray("data");
                     try {
-                        List<Comment> comments = objectMapper.readValue(String.valueOf(jData), new TypeReference<List<Comment>>() { });
+                        comments = objectMapper.readValue(String.valueOf(jData), new TypeReference<List<Comment>>() { });
                         menuList.setAdapter(new CommentAdapter(ImageActivity.this, comments));
                         Log.d("IMGY", "Comments count: " + Integer.toString(comments.size()));
                     } catch (IOException e) {
@@ -146,6 +147,16 @@ public class ImageActivity extends BootstrapActivity {
                     }
                     downvote.setImageDrawable(getResources().getDrawable(R.drawable.down_red_256));
                     vote_status = DOWNVOTE;
+                }
+            }
+        });
+
+        menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Comment comment = comments.get(i);
+                if (comment.getChildren().size() > 0) {
+                    startActivity(new Intent(ImageActivity.this, CommentsActivity.class).putExtra(COMMENTS, comment));
                 }
             }
         });

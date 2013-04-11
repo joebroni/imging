@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
-
 import com.corgrimm.imgy.BootstrapServiceProvider;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.core.CheckIn;

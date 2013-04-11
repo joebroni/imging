@@ -1,17 +1,16 @@
 package com.corgrimm.imgy.ui;
 
-import static com.corgrimm.imgy.core.Constants.Extra.USER;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.core.AvatarLoader;
 import com.corgrimm.imgy.core.User;
 import com.google.inject.Inject;
-
 import roboguice.inject.InjectExtra;
 import roboguice.inject.InjectView;
+
+import static com.corgrimm.imgy.core.Constants.Extra.USER;
 
 public class UserActivity extends BootstrapActivity {
 

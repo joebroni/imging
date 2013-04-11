@@ -1,24 +1,15 @@
 
 package com.corgrimm.imgy.authenticator;
 
-import static android.accounts.AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE;
-import static android.accounts.AccountManager.KEY_ACCOUNT_NAME;
-import static android.accounts.AccountManager.KEY_ACCOUNT_TYPE;
-import static android.accounts.AccountManager.KEY_AUTHTOKEN;
-import static android.accounts.AccountManager.KEY_BOOLEAN_RESULT;
-import static android.accounts.AccountManager.KEY_INTENT;
-import static com.corgrimm.imgy.authenticator.BootstrapAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE;
-import android.accounts.AbstractAccountAuthenticator;
-import android.accounts.Account;
-import android.accounts.AccountAuthenticatorResponse;
-import android.accounts.AccountManager;
-import android.accounts.NetworkErrorException;
+import android.accounts.*;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.corgrimm.imgy.core.Constants;
+
+import static android.accounts.AccountManager.*;
+import static com.corgrimm.imgy.authenticator.BootstrapAuthenticatorActivity.PARAM_AUTHTOKEN_TYPE;
 
 class BootstrapAccountAuthenticator extends AbstractAccountAuthenticator {
 

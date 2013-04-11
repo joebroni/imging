@@ -2,16 +2,15 @@
 
 package com.corgrimm.imgy.core.core;
 
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
 import com.corgrimm.imgy.core.BootstrapService;
 import com.corgrimm.imgy.core.User;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests of client API

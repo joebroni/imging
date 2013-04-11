@@ -7,10 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.corgrimm.imgy.R;
-import com.corgrimm.imgy.models.AlbumImage;
 import com.corgrimm.imgy.models.Comment;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.loopj.android.image.SmartImageView;
 
 import java.util.List;
 

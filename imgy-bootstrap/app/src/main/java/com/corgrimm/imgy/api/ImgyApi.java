@@ -1,33 +1,21 @@
 package com.corgrimm.imgy.api;
 
 
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
+import com.google.inject.Inject;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import static com.corgrimm.imgy.core.Constants.Oauth.*;
+import static com.corgrimm.imgy.core.Constants.Prefs.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -36,6 +24,8 @@ import java.util.Map;
  * Time: 10:04 AM
  */
 public class ImgyApi {
+
+    @Inject protected static SharedPreferences sharedPrefs;
     static StringEntity entity;
 
     public static ConnectivityManager connectivityManager;
@@ -43,7 +33,21 @@ public class ImgyApi {
     private static RequestParams params;
 
     public static void getMainGallery(Context context, JsonHttpResponseHandler getGalleryResponseHandler) {
-        ImgyRestClient.get(context, "gallery/hot/viral/0.json", null, getGalleryResponseHandler);
+
+        sharedPrefs = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+
+        String collection = sharedPrefs.getString(COLLECTION, VIRAL);
+        String filter = sharedPrefs.getString(FILTER, POPULAR);
+
+        ImgyRestClient.get(context, String.format("gallery/%s/%s/0.json", collection, filter), null, getGalleryResponseHandler);
+    }
+
+    public static void getMyImages(Context context, JsonHttpResponseHandler getGalleryResponseHandler) {
+        ImgyRestClient.rawUrlGetAuthenticated(context, "https://api.imgur.com/3/account/me/images", null, getGalleryResponseHandler);
+    }
+
+    public static void getMyAlbums(Context context, JsonHttpResponseHandler getGalleryResponseHandler) {
+        ImgyRestClient.rawUrlGetAuthenticated(context, "https://api.imgur.com/3/account/me/albums", null, getGalleryResponseHandler);
     }
 
     public static void getImageInfo(Context context, String imageId, JsonHttpResponseHandler imageInfoResponseHandler) {
@@ -56,6 +60,39 @@ public class ImgyApi {
 
     public static void getImageComments(Context context, String imageId, JsonHttpResponseHandler imageInfoResponseHandler) {
         ImgyRestClient.get(context, String.format("gallery/image/%s/comments", imageId), null, imageInfoResponseHandler);
+    }
+
+    public static void getAlbumComments(Context context, String albumId, JsonHttpResponseHandler imageInfoResponseHandler) {
+        ImgyRestClient.get(context, String.format("gallery/album/%s/comments", albumId), null, imageInfoResponseHandler);
+    }
+
+    public static void getAccessTokenFromCode(Context context, String code, AsyncHttpResponseHandler tokenResponseHandler) {
+        params = new RequestParams();
+
+        params.put("client_id", IMGUR_CLIENT_ID);
+        params.put("client_secret", IMGUR_CLIENT_SECRET);
+        params.put("grant_type", "authorization_code");
+        params.put("code", code);
+//        params.put("lon", Float.toString(latestLocation.lastLong));
+//        params.put("cep", Integer.toString(latestLocation.lastAccuracy) + ".0");
+
+        ImgyRestClient.postRawUrl(context, "https://api.imgur.com/oauth2/token", params, tokenResponseHandler);
+    }
+
+    public static void getAccessTokenFromRefresh(Context context, AsyncHttpResponseHandler tokenResponseHandler) {
+        sharedPrefs = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+        String refresh = sharedPrefs.getString(REFRESH_TOKEN, "");
+
+        params = new RequestParams();
+
+        params.put("client_id", IMGUR_CLIENT_ID);
+        params.put("client_secret", IMGUR_CLIENT_SECRET);
+        params.put("grant_type", "authorization_code");
+        params.put("refresh_token", refresh);
+//        params.put("lon", Float.toString(latestLocation.lastLong));
+//        params.put("cep", Integer.toString(latestLocation.lastAccuracy) + ".0");
+
+        ImgyRestClient.postRawUrl(context, "https://api.imgur.com/oauth2/token", params, tokenResponseHandler);
     }
 
     public static boolean CheckInternet(Context context) throws Error {
@@ -98,5 +135,33 @@ public class ImgyApi {
             }
         }
         return isNetAvailable;
+    }
+
+    public static int checkForValidAuthToken(Context context) {
+        sharedPrefs = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+        String authToken = sharedPrefs.getString(AUTH_TOKEN, null);
+        Long tokenExpires = sharedPrefs.getLong(TOKEN_EXPIRE, 0);
+
+        if (authToken != null && tokenExpires != 0) {
+            if (tokenExpires > System.currentTimeMillis()) {
+                return TOKEN_VALID;
+            }
+            return EXPIRED_TOKEN;
+        }
+        return NO_TOKEN;
+    }
+
+    public static void saveAuthToken(Context context, JSONObject object) {
+        sharedPrefs = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+
+        try {
+            sharedPrefs.edit()
+                    .putString(AUTH_TOKEN, object.getString("access_token"))
+                    .putString(REFRESH_TOKEN, object.getString("refresh_token"))
+                    .putLong(TOKEN_EXPIRE, System.currentTimeMillis() + (object.getLong("expires_in")*1000))
+                    .commit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

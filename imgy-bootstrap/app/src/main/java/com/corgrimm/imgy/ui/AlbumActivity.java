@@ -1,33 +1,32 @@
 package com.corgrimm.imgy.ui;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.webkit.WebView;
-import android.widget.ImageButton;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
 import com.corgrimm.imgy.models.Album;
-import com.corgrimm.imgy.models.AlbumImage;
+import com.corgrimm.imgy.models.Comment;
 import com.corgrimm.imgy.models.GalleryAlbum;
-import com.corgrimm.imgy.models.GalleryImage;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.image.SmartImageView;
 import com.slidingmenu.lib.SlidingMenu;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import roboguice.inject.InjectExtra;
 import roboguice.inject.InjectView;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.corgrimm.imgy.core.Constants.Extra.ALBUM;
-import static com.corgrimm.imgy.core.Constants.Extra.IMAGE;
-import static com.corgrimm.imgy.core.Constants.Vote.*;
+import static com.corgrimm.imgy.core.Constants.Extra.COMMENTS;
 
 public class AlbumActivity extends BootstrapActivity {
 
@@ -39,6 +38,8 @@ public class AlbumActivity extends BootstrapActivity {
 
     protected  SlidingMenu menu;
     protected int vote_status;
+    List<Comment> comments;
+    ListView menuList;
 
 
     @Override
@@ -56,6 +57,7 @@ public class AlbumActivity extends BootstrapActivity {
         menu.setFadeDegree(0.35f);
         menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
         menu.setMenu(R.layout.slider_menu_list);
+        menuList = (ListView) findViewById(R.id.menu_list);
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -83,6 +85,32 @@ public class AlbumActivity extends BootstrapActivity {
             @Override
             public void onFailure(Throwable error, String content) {
                 super.onFailure(error, content);
+            }
+        });
+
+        ImgyApi.getAlbumComments(AlbumActivity.this, gAlbum.getId(), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                super.onSuccess(response);
+                try {
+                    JSONArray jData = response.getJSONArray("data");
+                    try {
+                        comments = objectMapper.readValue(String.valueOf(jData), new TypeReference<List<Comment>>() {
+                        });
+                        menuList.setAdapter(new CommentAdapter(AlbumActivity.this, comments));
+                        Log.d("IMGY", "Comments count: " + Integer.toString(comments.size()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable e, JSONObject errorResponse) {
+                super.onFailure(e, errorResponse);
             }
         });
 
@@ -123,6 +151,16 @@ public class AlbumActivity extends BootstrapActivity {
 //                }
 //            }
 //        });
+
+        menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Comment comment = comments.get(i);
+                if (comment.getChildren().size() > 0) {
+                    startActivity(new Intent(AlbumActivity.this, CommentsActivity.class).putExtra(COMMENTS, comment));
+                }
+            }
+        });
     }
 
 

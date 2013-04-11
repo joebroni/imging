@@ -95,6 +95,40 @@ public class Constants {
         public static final String USER = "user";
         public static final String IMAGE = "image";
         public static final String ALBUM = "album";
+        public static final String COMMENTS = "comments";
+
+    }
+
+    public static class Prefs {
+        private Prefs() {}
+
+        public static final String PREFS_NAME = "com.corgrimm.imgy_preferences";
+
+        public static final String VIRAL = "hot";
+        public static final String USER = "user";
+        public static final String SCORE = "top";
+
+        public static final String NEWEST = "time";
+        public static final String POPULAR = "viral";
+
+        public static final String AUTH_TOKEN = "auth_token";
+        public static final String REFRESH_TOKEN = "refresh_token";
+        public static final String TOKEN_EXPIRE = "token_expire";
+
+        public static final String COLLECTION = "collection";
+        public static final String FILTER = "filter";
+
+    }
+
+    public static class Oauth {
+        private Oauth() {}
+
+        public static final String IMGUR_CLIENT_ID = "8a24b67691c0319";
+        public static final String IMGUR_CLIENT_SECRET = "3d9ee4627b1a1aac08d13b48e4f21bc693b7dced";
+
+        public static final int TOKEN_VALID = 0;
+        public static final int NO_TOKEN = 1;
+        public static final int EXPIRED_TOKEN = 2;
 
     }
 
