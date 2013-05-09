@@ -6,19 +6,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ToggleButton;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
-import com.corgrimm.imgy.core.Constants;
+import com.crashlytics.android.Crashlytics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.inject.Inject;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.slidingmenu.lib.SlidingMenu;
 import org.json.JSONObject;
@@ -46,6 +46,7 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
     ImageListFragment gridFragment;
 
     SlidingMenu menu;
+    SlidingMenu filterMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,8 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         super.onCreate(savedInstanceState);
+        Crashlytics.start(this);
+
         setContentView(R.layout.content_view);
 
         menu = new SlidingMenu(this);
@@ -64,6 +67,16 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
         menu.setFadeDegree(0.35f);
         menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
         menu.setMenu(R.layout.home_menu);
+
+        filterMenu = new SlidingMenu(this);
+        filterMenu.setMode(SlidingMenu.RIGHT);
+        filterMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        filterMenu.setShadowWidthRes(R.dimen.shadow_width);
+        filterMenu.setShadowDrawable(R.drawable.shadowright);
+        filterMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+        filterMenu.setFadeDegree(0.35f);
+        filterMenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+        filterMenu.setMenu(R.layout.filter_menu);
 
         gridFragment = (ImageListFragment) getSupportFragmentManager().findFragmentById(R.id.image_list_fragment);
 
@@ -268,10 +281,18 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+//                Crashlytics.getInstance().crash();
             }
         });
 
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getSupportMenuInflater();
+        inflater.inflate(R.menu.imgy_main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -279,6 +300,12 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
         switch(item.getItemId()) {
             case android.R.id.home:
                 menu.toggle(true);
+                return true;
+            case R.id.filter:
+                filterMenu.toggle(true);
+                return true;
+            case R.id.refresh:
+                gridFragment.refreshGrid();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

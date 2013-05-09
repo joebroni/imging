@@ -2,6 +2,7 @@ package com.corgrimm.imgy.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,9 +16,10 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
-import com.corgrimm.imgy.models.Comment;
-import com.corgrimm.imgy.models.GalleryImage;
+import com.corgrimm.imgy.models.*;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -30,10 +32,13 @@ import roboguice.inject.InjectExtra;
 import roboguice.inject.InjectView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.corgrimm.imgy.core.Constants.Extra.COMMENTS;
-import static com.corgrimm.imgy.core.Constants.Extra.IMAGE;
+import static com.corgrimm.imgy.core.Constants.Extra.*;
+import static com.corgrimm.imgy.core.Constants.Oauth.EXPIRED_TOKEN;
+import static com.corgrimm.imgy.core.Constants.Oauth.IMGUR_CLIENT_ID;
+import static com.corgrimm.imgy.core.Constants.Oauth.TOKEN_VALID;
 import static com.corgrimm.imgy.core.Constants.Vote.*;
 
 public class ImageActivity extends BootstrapActivity {
@@ -47,12 +52,14 @@ public class ImageActivity extends BootstrapActivity {
     @InjectView(R.id.upvote) protected ImageButton upvote;
     @InjectView(R.id.downvote) protected ImageButton downvote;
 
-    @InjectExtra(IMAGE) protected GalleryImage gImage;
+    @InjectExtra(GALLERY) protected ArrayList<Object> gallery;
+    @InjectExtra(INDEX) protected int index;
 
     protected  SlidingMenu menu;
     ListView menuList;
     protected int vote_status;
     List<Comment> comments;
+    GalleryImage gImage;
 
 
     @Override
@@ -75,6 +82,8 @@ public class ImageActivity extends BootstrapActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        gImage = (GalleryImage) gallery.get(index);
+
         if (gImage.getAnimated()) {
             image.setVisibility(View.GONE);
             gifView.setVisibility(View.VISIBLE);
@@ -84,6 +93,17 @@ public class ImageActivity extends BootstrapActivity {
         }
         else {
             image.setImageUrl(gImage.getLink());
+        }
+
+        if (gImage.getVote() != null) {
+            if (gImage.getVote().equals(UP_VOTE_STRING)) {
+                upvote.setImageDrawable(getResources().getDrawable(R.drawable.up_green_256));
+                vote_status = UPVOTE;
+            }
+            else if (gImage.getVote().equals(DOWN_VOTE_STRING)) {
+                downvote.setImageDrawable(getResources().getDrawable(R.drawable.down_red_256));
+                vote_status = DOWNVOTE;
+            }
         }
 
         caption.setText(gImage.getTitle());
@@ -96,7 +116,12 @@ public class ImageActivity extends BootstrapActivity {
                     JSONArray jData = response.getJSONArray("data");
                     try {
                         comments = objectMapper.readValue(String.valueOf(jData), new TypeReference<List<Comment>>() { });
-                        menuList.setAdapter(new CommentAdapter(ImageActivity.this, comments));
+                        if (gImage.getAccount_url() != null) {
+                            menuList.setAdapter(new CommentAdapter(ImageActivity.this, comments, gImage.getAccount_url()));
+                        }
+                        else {
+                            menuList.setAdapter(new CommentAdapter(ImageActivity.this, comments, ""));
+                        }
                         Log.d("IMGY", "Comments count: " + Integer.toString(comments.size()));
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -120,44 +145,36 @@ public class ImageActivity extends BootstrapActivity {
         upvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (vote_status == UPVOTE) {
-                    upvote.setImageDrawable(getResources().getDrawable(R.drawable.up_white_256));
-                    vote_status = NO_VOTE;
-                }
-                else {
+//                if (vote_status == UPVOTE) {
+//                    upvote.setImageDrawable(getResources().getDrawable(R.drawable.up_white_256));
+//                    vote_status = NO_VOTE;
+//                }
+//                else {
                     if (vote_status == DOWNVOTE) {
                         downvote.setImageDrawable(getResources().getDrawable(R.drawable.down_white_256));
                     }
                     upvote.setImageDrawable(getResources().getDrawable(R.drawable.up_green_256));
                     vote_status = UPVOTE;
-                }
+                    voteOnImage(UP_VOTE_STRING);
+//                }
             }
         });
 
         downvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (vote_status == DOWNVOTE) {
-                    downvote.setImageDrawable(getResources().getDrawable(R.drawable.down_white_256));
-                    vote_status = NO_VOTE;
-                }
-                else {
+//                if (vote_status == DOWNVOTE) {
+//                    downvote.setImageDrawable(getResources().getDrawable(R.drawable.down_white_256));
+//                    vote_status = NO_VOTE;
+//                }
+//                else {
                     if (vote_status == UPVOTE) {
                         upvote.setImageDrawable(getResources().getDrawable(R.drawable.up_white_256));
                     }
                     downvote.setImageDrawable(getResources().getDrawable(R.drawable.down_red_256));
                     vote_status = DOWNVOTE;
-                }
-            }
-        });
-
-        menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Comment comment = comments.get(i);
-                if (comment.getChildren().size() > 0) {
-                    startActivity(new Intent(ImageActivity.this, CommentsActivity.class).putExtra(COMMENTS, comment));
-                }
+                    voteOnImage(DOWN_VOTE_STRING);
+//                }
             }
         });
     }
@@ -175,8 +192,81 @@ public class ImageActivity extends BootstrapActivity {
             case R.id.comments:
                 menu.toggle(true);
                 return true;
+            case R.id.left:
+                previous();
+                return true;
+            case R.id.right:
+                next();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void previous() {
+        if (index != 0 ) {
+            if (gallery.get(index - 1).getClass() == GalleryImage.class) {
+                startActivity(new Intent(ImageActivity.this, ImageActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index - 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+            else {
+                startActivity(new Intent(ImageActivity.this, AlbumActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index - 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+        }
+    }
+
+    private void next() {
+        if (index != gallery.size() - 1 ) {
+            if (gallery.get(index + 1).getClass() == GalleryImage.class) {
+                startActivity(new Intent(ImageActivity.this, ImageActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index + 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+            else {
+                startActivity(new Intent(ImageActivity.this, AlbumActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index + 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+        }
+    }
+
+    private void voteOnImage(final String vote) {
+        int tokenStatus = ImgyApi.checkForValidAuthToken(this);
+        if ( tokenStatus == TOKEN_VALID) {
+            ImgyApi.voteForImage(this, gImage.getId(), vote, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(JSONObject response) {
+                    super.onSuccess(response);
+
+                }
+
+                @Override
+                public void onFailure(Throwable e, JSONObject errorResponse) {
+                    super.onFailure(e, errorResponse);
+                }
+
+                @Override
+                public void onFailure(Throwable e, JSONArray errorResponse) {
+                    super.onFailure(e, errorResponse);
+                }
+            });
+        }
+        else if (tokenStatus == EXPIRED_TOKEN) {
+            ImgyApi.getAccessTokenFromRefresh(ImageActivity.this, new JsonHttpResponseHandler() {
+                @Override
+                public void onFailure(Throwable e, JSONObject errorResponse) {
+                    super.onFailure(e, errorResponse);
+                }
+
+                @Override
+                public void onSuccess(JSONObject response) {
+                    super.onSuccess(response);
+                    ImgyApi.saveAuthToken(ImageActivity.this, response);
+                    voteOnImage(vote);
+                }
+            });
+        }
+        else {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(
+                    Uri.parse(String.format("https://api.imgur.com/oauth2/authorize?client_id=%s&response_type=%s&state=%s", IMGUR_CLIENT_ID, "code", "useless")));
+            startActivity(intent);
         }
     }
 

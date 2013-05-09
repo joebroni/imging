@@ -36,7 +36,7 @@
     <color name="text_shadow">#000000</color>
 
     <color name="background_selected">#1fb6ed</color>
-    <color name="toggle_off">#666666</color>
+    <color name="toggle_off">#00000000</color>
     <color name="toggle_on">#ff00bb00</color>
 
 

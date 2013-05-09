@@ -6,114 +6,45 @@
               android:layout_height="match_parent"
               android:background="#222">
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/images_of_today"
-        android:text="Choose your gallery"
-        android:textColor="#fff"
-        android:gravity="center"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="10dp"/>
-
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="2dp"
+        android:background="#333"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
 
-        <ToggleButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/viral"
-            android:textOn="most viral"
-            android:textOff="most viral"
-            android:layout_margin="5dp"
-            android:background="@drawable/toggle_button"/>
-
-        <ToggleButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/user"
-            android:textOn="user submitted"
-            android:textOff="user submitted"
-            android:layout_margin="5dp"
-            android:background="@drawable/toggle_button"/>
-
-        <ToggleButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/score"
-            android:textOn="highest scoring"
-            android:textOff="highest scoring"
-            android:layout_margin="5dp"
-            android:background="@drawable/toggle_button"/>
-    </LinearLayout>
-
-    <TextView
+    <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/images_of_today"
-        android:text="images of today, sorted by"
-        android:textColor="#fff"
-        android:gravity="center"
+        android:id="@+id/upload"
+        android:background="@drawable/imgy_button"
+        android:text="upload image"
+        android:textSize="14sp"
         android:layout_margin="5dp"/>
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="2dp"
+        android:background="#333"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
 
-        <ToggleButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/newest"
-            android:textOn="newest"
-            android:textOff="newest"
-            android:layout_margin="5dp"
-            android:background="@drawable/toggle_button"/>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/my_images"
+        android:background="@drawable/imgy_button"
+        android:text="my images"
+        android:textSize="14sp"
+        android:layout_margin="5dp"/>
 
-        <ToggleButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/popular"
-            android:textOn="popularity"
-            android:textOff="popularity"
-            android:layout_margin="5dp"
-            android:background="@drawable/toggle_button"/>
-    </LinearLayout>
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="2dp"
-                  android:background="#333"
-                  android:layout_marginTop="5dp"
-                  android:layout_marginBottom="5dp"/>
-    <Button android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/upload"
-            android:background="@drawable/imgy_button"
-            android:text="upload image"
-            android:textSize="14sp"
-            android:layout_margin="5dp"/>
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="2dp"
-                  android:background="#333"
-                  android:layout_marginTop="5dp"
-                  android:layout_marginBottom="5dp"/>
-    <Button android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/my_images"
-            android:background="@drawable/imgy_button"
-            android:text="my images"
-            android:textSize="14sp"
-            android:layout_margin="5dp"/>
-    <Button android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/my_albums"
-            android:background="@drawable/imgy_button"
-            android:text="my albums"
-            android:textSize="14sp"
-            android:layout_margin="5dp"/>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/my_albums"
+        android:background="@drawable/imgy_button"
+        android:text="my albums"
+        android:textSize="14sp"
+        android:layout_margin="5dp"/>
 
 </LinearLayout>

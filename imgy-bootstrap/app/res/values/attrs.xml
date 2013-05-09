@@ -24,5 +24,6 @@
         <attr name="fadeDegree" format="float" />
         <attr name="selectorEnabled" format="boolean" />
         <attr name="selectorDrawable" format="reference" />
+        <attr name="asListArrowUp" format="reference"/>
     </declare-styleable>
 </resources>

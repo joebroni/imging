@@ -11,6 +11,9 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.corgrimm.imgy.BootstrapServiceProvider;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
@@ -30,8 +33,7 @@ import roboguice.inject.InjectView;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.corgrimm.imgy.core.Constants.Extra.ALBUM;
-import static com.corgrimm.imgy.core.Constants.Extra.IMAGE;
+import static com.corgrimm.imgy.core.Constants.Extra.*;
 import static com.corgrimm.imgy.core.Constants.Oauth.*;
 
 public class ImageListFragment extends RoboFragment {
@@ -68,8 +70,8 @@ public class ImageListFragment extends RoboFragment {
 
     public void refreshGrid() {
         grid.setAdapter(null);
-        imageLinks = new ArrayList<ImageIdUrl>();
         loading.setVisibility(View.VISIBLE);
+        imageLinks = new ArrayList<ImageIdUrl>();
         ImgyApi.getMainGallery(getActivity(), new JsonHttpResponseHandler() {
 
             @Override
@@ -82,13 +84,16 @@ public class ImageListFragment extends RoboFragment {
                     while (i < jData.length()) {
                         if (jData.getJSONObject(i).getBoolean("is_album")) {
                             GalleryAlbum album = objectMapper.readValue(String.valueOf(jData.getJSONObject(i)), GalleryAlbum.class);
-                            gallery.add(album);
+                            if (album.getPrivacy().equals("public")) {
+                                gallery.add(album);
+                            }
                         } else {
                             GalleryImage image = objectMapper.readValue(String.valueOf(jData.getJSONObject(i)), GalleryImage.class);
                             gallery.add(image);
                         }
                         i++;
                     }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (JsonMappingException e) {
@@ -102,6 +107,7 @@ public class ImageListFragment extends RoboFragment {
                 Log.d("IMGY", "Gallery Size is " + Integer.toString(gallery.size()));
 
                 for (Object o : gallery) {
+                    final int index = gallery.indexOf(o);
                     if (o.getClass() == GalleryImage.class) {
                         GalleryImage image = (GalleryImage) o;
                         imageLinks.add(new ImageIdUrl(image.getId(), image.getLink()));
@@ -118,7 +124,17 @@ public class ImageListFragment extends RoboFragment {
                                     for (AlbumImage image : albumFull.getImages()) {
                                         if (image.getId().equals(albumFull.getCover())) {
                                             //imageView.setImageUrl(image.getLink());
-                                            imageLinks.add(new ImageIdUrl(album.getId(), image.getLink()));
+                                            if (index > imageLinks.size()) {
+                                                imageLinks.add(new ImageIdUrl(album.getId(), image.getLink()));
+                                            }
+                                            else {
+                                                if (index == 0) {
+                                                    imageLinks.add(0, new ImageIdUrl(album.getId(), image.getLink()));
+                                                }
+                                                else {
+                                                    imageLinks.add(index-1, new ImageIdUrl(album.getId(), image.getLink()));
+                                                }
+                                            }
                                         }
                                     }
                                 } catch (IOException e) {
@@ -127,7 +143,7 @@ public class ImageListFragment extends RoboFragment {
                                     e.printStackTrace();
                                 }
 
-                                if (imageLinks.size() == gallery.size()) {
+                                if (imageLinks.size() >= gallery.size() - 1) {
                                     grid.setAdapter(new ImageAdapter(getActivity(), imageLinks));
                                     loading.setVisibility(View.GONE);
                                 }
@@ -166,14 +182,14 @@ public class ImageListFragment extends RoboFragment {
                     if (o.getClass() == GalleryImage.class) {
                         GalleryImage image = (GalleryImage) o;
                         if (imageIdUrl.getId().equals(image.getId())) {
-                            startActivity(new Intent(getActivity(), ImageActivity.class).putExtra(IMAGE, image));
+                            startActivity(new Intent(getActivity(), ImageActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, gallery.indexOf(o)));
                             break;
                         }
                     }
                     else {
                         GalleryAlbum album = (GalleryAlbum) o;
                         if (imageIdUrl.getId().equals(album.getId())) {
-                            startActivity(new Intent(getActivity(), AlbumActivity.class).putExtra(ALBUM, album));
+                            startActivity(new Intent(getActivity(), AlbumActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, gallery.indexOf(o)));
                             break;
                         }
                     }
@@ -252,7 +268,7 @@ public class ImageListFragment extends RoboFragment {
                         if (o.getClass() == GalleryImage.class) {
                             GalleryImage image = (GalleryImage) o;
                             if (imageIdUrl.getId().equals(image.getId())) {
-                                startActivity(new Intent(getActivity(), ImageActivity.class).putExtra(IMAGE, image));
+                                startActivity(new Intent(getActivity(), ImageActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, gallery.indexOf(o)));
                                 break;
                             }
                         }
@@ -272,6 +288,11 @@ public class ImageListFragment extends RoboFragment {
                     super.onSuccess(response);
                     ImgyApi.saveAuthToken(getActivity(), response);
                     getMyImages();
+                }
+
+                @Override
+                public void onFailure(Throwable error, String content) {
+                    super.onFailure(error, content);
                 }
             });
         }
@@ -376,7 +397,7 @@ public class ImageListFragment extends RoboFragment {
                     for (Object o : gallery) {
                         GalleryAlbum album = (GalleryAlbum) o;
                         if (imageIdUrl.getId().equals(album.getId())) {
-                            startActivity(new Intent(getActivity(), AlbumActivity.class).putExtra(ALBUM, album));
+                            startActivity(new Intent(getActivity(), AlbumActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, gallery.indexOf(o)));
                             break;
                         }
                     }

@@ -1,30 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="#222"
-                android:padding="10dp">
-
+                android:padding="10dp"
+    android:gravity="center_vertical">
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+        android:layout_weight="1">
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content">
-    <TextView android:layout_width="wrap_content"
+    <TextView android:layout_width="fill_parent"
               android:layout_height="wrap_content"
+              android:layout_weight="1"
               android:id="@+id/username"
+              android:singleLine="true"
+              android:textSize="12sp"
               android:textColor="#0f0"
               android:text="User"/>
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
+                  android:id="@+id/op"
+                  android:text="OP"
+                  android:textColor="#F0F"
+                  android:textSize="10sp"
+                  android:layout_marginLeft="10dp"
+            android:visibility="gone"/>
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
                   android:id="@+id/points_time"
                   android:text="9999999 points : 2 hours ago"
-                  android:textSize="12sp"
-            android:layout_marginLeft="10dp"/>
+                  android:textSize="10sp"
+            android:layout_marginLeft="5dp"/>
     </LinearLayout>
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:id="@+id/comment"
               android:text="Go home, you are drunk."
-              android:textSize="16sp"
+              android:textSize="12sp"
         android:textColor="#fff"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+        android:layout_marginLeft="10dp">
+        <ImageButton android:layout_width="20dp"
+                     android:layout_height="20dp"
+                     android:id="@+id/upvote"
+                     android:src="@drawable/up_white_256"
+                     android:scaleType="fitCenter"
+                     android:background="#0000"/>
+        <ImageButton android:layout_width="20dp"
+                     android:layout_height="20dp"
+                     android:id="@+id/downvote"
+                     android:src="@drawable/down_white_256"
+                     android:scaleType="fitCenter"
+                     android:background="#0000"
+
+                     android:layout_marginRight="10dp"/>
+                  </LinearLayout>
 </LinearLayout>

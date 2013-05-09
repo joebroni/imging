@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/refresh"
+        android:icon="@drawable/refresh_white_32"
+        android:showAsAction="always"
+        android:title="@string/refresh_action" >
+    </item>
+    <item
+        android:id="@+id/filter"
+        android:icon="@drawable/empty_filter_white_32"
+        android:showAsAction="always"
+        android:title="@string/filter_action" >
+    </item>
+
+
+</menu>

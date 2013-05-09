@@ -31,7 +31,7 @@ public class GalleryImage implements Serializable{
     @JsonProperty("type") private String type;
     @JsonProperty("ups") private Number ups;
     @JsonProperty("views") private Number views;
-    @JsonProperty("vote") private Boolean vote;
+    @JsonProperty("vote") private String vote;
     @JsonProperty("width") private Number width;
 
     public String getAccount_url() {
@@ -170,11 +170,11 @@ public class GalleryImage implements Serializable{
         this.views = views;
     }
 
-    public Boolean getVote() {
+    public String getVote() {
         return vote;
     }
 
-    public void setVote(Boolean vote) {
+    public void setVote(String vote) {
         this.vote = vote;
     }
 

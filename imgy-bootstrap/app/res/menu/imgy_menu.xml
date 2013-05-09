@@ -4,8 +4,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/left"
+        android:icon="@drawable/left_white_32"
+        android:showAsAction="always"
+        android:title="@string/left_action" >
+    </item>
+    <item
+        android:id="@+id/right"
+        android:icon="@drawable/right_white_32"
+        android:showAsAction="always"
+        android:title="@string/right_action" >
+    </item>
+    <item
         android:id="@+id/comments"
-        android:icon="@drawable/speech_bubble_white_256"
+        android:icon="@drawable/speech_bubble_white_32"
         android:showAsAction="always"
         android:title="@string/comments_action" >
     </item>

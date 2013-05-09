@@ -14,6 +14,7 @@ import roboguice.inject.InjectExtra;
 import roboguice.inject.InjectView;
 
 import static com.corgrimm.imgy.core.Constants.Extra.COMMENTS;
+import static com.corgrimm.imgy.core.Constants.Extra.OP;
 
 public class CommentsActivity extends BootstrapActivity {
 
@@ -23,8 +24,10 @@ public class CommentsActivity extends BootstrapActivity {
     @InjectView(R.id.username) protected TextView username;
     @InjectView(R.id.points_time) protected TextView pointsTime;
     @InjectView(R.id.comment) protected TextView commentString;
+    @InjectView(R.id.op) protected TextView op;
 
     @InjectExtra(COMMENTS) protected Comment comment;
+    @InjectExtra(OP) protected String opId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,21 +42,20 @@ public class CommentsActivity extends BootstrapActivity {
         pointsTime.setText(String.format("%s points", comment.getPoints()));
         commentString.setText(comment.getComment());
 
-        commentsList.setAdapter(new CommentAdapter(CommentsActivity.this, comment.getChildren()));
+        if (opId.equals(comment.getAuthor())) {
+            op.setVisibility(View.VISIBLE);
+        }
+        else {
+            op.setVisibility(View.GONE);
+        }
+
+        commentsList.setAdapter(new CommentAdapter(CommentsActivity.this, comment.getChildren(), opId));
 
         setListeners();
     }
 
     private void setListeners() {
-        commentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Comment childComment = comment.getChildren().get(i);
-                if (childComment.getChildren().size() > 0) {
-                    startActivity(new Intent(CommentsActivity.this, CommentsActivity.class).putExtra(COMMENTS, childComment));
-                }
-            }
-        });
+
 
     }
 

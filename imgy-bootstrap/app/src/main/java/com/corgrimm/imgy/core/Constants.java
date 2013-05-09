@@ -84,6 +84,9 @@ public class Constants {
         public static final int UPVOTE = 1;
         public static final int DOWNVOTE = 2;
 
+        public static final String UP_VOTE_STRING = "up";
+        public static final String DOWN_VOTE_STRING = "down";
+
     }
 
 
@@ -96,6 +99,9 @@ public class Constants {
         public static final String IMAGE = "image";
         public static final String ALBUM = "album";
         public static final String COMMENTS = "comments";
+        public static final String OP = "op";
+        public static final String GALLERY = "gallery";
+        public static final String INDEX = "index";
 
     }
 

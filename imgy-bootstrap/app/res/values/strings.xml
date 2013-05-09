@@ -2,11 +2,14 @@
 
 <resources>
 
-    <string name="app_name">imgy</string>
+    <string name="app_name">imging</string>
     <string name="content_column">Content</string>
     <string name="page_referrers">Referrers</string>
     <string name="refresh_action">Refresh</string>
     <string name="comments_action">Comments</string>
+    <string name="left_action">Left</string>
+    <string name="right_action">Right</string>
+    <string name="filter_action">Filter</string>
     <string name="logout_action">Logout</string>
     <string name="page_news">News</string>
     <string name="page_users">Users</string>

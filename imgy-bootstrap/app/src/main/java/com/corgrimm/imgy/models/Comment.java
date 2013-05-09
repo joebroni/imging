@@ -29,6 +29,7 @@ public class Comment implements Serializable {
     @JsonProperty("parent_id") private Number parentId;
     @JsonProperty("points") private Number points;
     @JsonProperty("ups") private Number ups;
+    @JsonProperty("vote") private String vote;
 
     public String getAlbum_cover() {
         return album_cover;
@@ -140,5 +141,13 @@ public class Comment implements Serializable {
 
     public void setUps(Number ups) {
         this.ups = ups;
+    }
+
+    public String getVote() {
+        return vote;
+    }
+
+    public void setVote(String vote) {
+        this.vote = vote;
     }
 }

@@ -54,18 +54,11 @@ public class AlbumImageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View albumImageView = convertView;
-//        if (albumImageView == null) {
+        if (albumImageView == null) {
             albumImageView = LayoutInflater.from(ctx).inflate(R.layout.album_image, parent, false);
-//        }
+        }
         AlbumImage image = images.get(position);
-//        if (arg1 == null) {  // if it's not recycled, initialize some attributes
-//            imageView = new SmartImageView(ctx);
-//            imageView.setLayoutParams(new GridView.LayoutParams(width/2, width/2));
-//            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//            imageView.setPadding(0, 0, 0, 0);
-//        } else {
-//            imageView = (SmartImageView) arg1;
-//        }
+
         SmartImageView imageView = (SmartImageView) albumImageView.findViewById(R.id.imgImage);
         TextView description = (TextView) albumImageView.findViewById(R.id.description);
         TextView title = (TextView) albumImageView.findViewById(R.id.title);
@@ -74,7 +67,7 @@ public class AlbumImageAdapter extends BaseAdapter {
         title.setVisibility(View.GONE);
         description.setVisibility(View.GONE);
 
-        imageView.setSampleSize(2);
+//        imageView.setSampleSize(2);
         imageView.setImageUrl(image.getLink());
         if (image.getTitle() != null && !image.getTitle().equals("")) {
             title.setVisibility(View.VISIBLE);

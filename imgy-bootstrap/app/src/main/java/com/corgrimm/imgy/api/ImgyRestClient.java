@@ -47,7 +47,7 @@ public class ImgyRestClient {
     public static void get(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 
         setSocketFactory(client);
-        setHeaders(context, false);
+        setHeaders(context);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -70,29 +70,7 @@ public class ImgyRestClient {
     public static void rawUrlGet(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 
         setSocketFactory(client);
-        setHeaders(context, false);
-        if (!ImgyApi.CheckInternet(context)) {
-            AlertDialog alert = new AlertDialog.Builder(context).create();
-            alert.setTitle(context.getString(R.string.oops));
-            alert.setMessage(context.getString(R.string.error_no_connection));
-            alert.setButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    ((Activity) context).finish();
-                }
-            });
-            alert.show();
-//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
-        } else {
-            client.get(url, params, responseHandler);
-//            JLogger.getInstance(context).log("Jingit: Get url: " + url);
-            Log.d("IMGY", "Get raw url: " + url);
-        }
-    }
-
-    public static void rawUrlGetAuthenticated(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-
-        setSocketFactory(client);
-        setHeaders(context, true);
+        setHeaders(context);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -302,10 +280,10 @@ public class ImgyRestClient {
             return IMGY_BASE_URL +relativeUrl;
     }
 
-    private static void setHeaders(Context context, Boolean authenticated) {
+    private static void setHeaders(Context context) {
 
         client.addHeader("Accept", "application/json");
-        if (authenticated && ImgyApi.checkForValidAuthToken(context) == TOKEN_VALID) {
+        if (ImgyApi.checkForValidAuthToken(context) == TOKEN_VALID) {
             sharedPrefs = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
             String authToken = sharedPrefs.getString(AUTH_TOKEN, null);
             client.addHeader("Authorization", String.format("Bearer %s", authToken));

@@ -68,6 +68,7 @@
         <activity android:name=".ui.ImageActivity" />
         <activity android:name=".ui.AlbumActivity" />
         <activity android:name=".ui.CommentsActivity" />
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="7be8e05beb1f96542371d451e7e7c55dc36356aa"/>
 
     </application>
 

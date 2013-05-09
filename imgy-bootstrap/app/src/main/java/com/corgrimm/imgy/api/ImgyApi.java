@@ -43,11 +43,11 @@ public class ImgyApi {
     }
 
     public static void getMyImages(Context context, JsonHttpResponseHandler getGalleryResponseHandler) {
-        ImgyRestClient.rawUrlGetAuthenticated(context, "https://api.imgur.com/3/account/me/images", null, getGalleryResponseHandler);
+        ImgyRestClient.rawUrlGet(context, "https://api.imgur.com/3/account/me/images", null, getGalleryResponseHandler);
     }
 
     public static void getMyAlbums(Context context, JsonHttpResponseHandler getGalleryResponseHandler) {
-        ImgyRestClient.rawUrlGetAuthenticated(context, "https://api.imgur.com/3/account/me/albums", null, getGalleryResponseHandler);
+        ImgyRestClient.rawUrlGet(context, "https://api.imgur.com/3/account/me/albums", null, getGalleryResponseHandler);
     }
 
     public static void getImageInfo(Context context, String imageId, JsonHttpResponseHandler imageInfoResponseHandler) {
@@ -64,6 +64,18 @@ public class ImgyApi {
 
     public static void getAlbumComments(Context context, String albumId, JsonHttpResponseHandler imageInfoResponseHandler) {
         ImgyRestClient.get(context, String.format("gallery/album/%s/comments", albumId), null, imageInfoResponseHandler);
+    }
+
+    public static void voteForImage(Context context, String imageId, String vote, JsonHttpResponseHandler imageVoteResponseHandler) {
+        ImgyRestClient.post(context, String.format("gallery/image/%s/vote/%s", imageId, vote), null, imageVoteResponseHandler);
+    }
+
+    public static void voteForAlbum(Context context, String albumId, String vote, JsonHttpResponseHandler albumVoteResponseHandler) {
+        ImgyRestClient.post(context, String.format("gallery/album/%s/vote/%s", albumId, vote), null, albumVoteResponseHandler);
+    }
+
+    public static void voteForComment(Context context, Number commentId, String vote, JsonHttpResponseHandler commentVoteResponseHandler) {
+        ImgyRestClient.post(context, String.format("comment/%s/vote/%s", commentId.toString(), vote), null, commentVoteResponseHandler);
     }
 
     public static void getAccessTokenFromCode(Context context, String code, AsyncHttpResponseHandler tokenResponseHandler) {
@@ -87,7 +99,7 @@ public class ImgyApi {
 
         params.put("client_id", IMGUR_CLIENT_ID);
         params.put("client_secret", IMGUR_CLIENT_SECRET);
-        params.put("grant_type", "authorization_code");
+        params.put("grant_type", "refresh_token");
         params.put("refresh_token", refresh);
 //        params.put("lon", Float.toString(latestLocation.lastLong));
 //        params.put("cep", Integer.toString(latestLocation.lastAccuracy) + ".0");
