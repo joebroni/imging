@@ -6,7 +6,7 @@ It is a simple and attractive Imgur client.
 Please see the [issues](https://github.com.corgrimm.imgy/issues) section
 to report any bugs or feature requests and to see the list of known issues.
 
-  <img src="http://s8.photobucket.com/user/Freonite/media/framed_2013-05-10085640.png.html">
+  [URL=http://s8.photobucket.com/user/Freonite/media/framed_2013-05-10085920.png.html][IMG]http://i8.photobucket.com/albums/a36/Freonite/framed_2013-05-10085920.png[/IMG][/URL]
   <img src="http://s8.photobucket.com/user/Freonite/media/framed_2013-05-10085800.png.html">
   <img src="http://s8.photobucket.com/user/Freonite/media/framed_2013-05-10085920.png.html">
   
