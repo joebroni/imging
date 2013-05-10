@@ -1,4 +1,4 @@
-# imgy App
+# imging App
 
 This repository contains the source code for the Imging Android app currently under development. 
 It is a simple and attractive Imgur client.
