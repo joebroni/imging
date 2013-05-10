@@ -49,5 +49,8 @@
     <string name="error_no_connection">It appears that there is no connection to the internet. Please check your connection settings and try again.</string>
     <string name="ok">OK</string>
 
-
+    <string name="album_error">Oops! There was a problem with the album you are trying to view.</string>
+    <string name="image_error">Oops! There was a problem with the album you are trying to view.</string>
+    <string name="general_error">Oops! It looks like you broke something… way to go.</string>
+    <string name="upload_success">Image uploaded successfully.</string>
 </resources>

@@ -9,11 +9,16 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
 import com.corgrimm.imgy.models.Album;
 import com.corgrimm.imgy.models.Comment;
 import com.corgrimm.imgy.models.GalleryAlbum;
+import com.corgrimm.imgy.models.GalleryImage;
+import com.devspark.appmsg.AppMsg;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
@@ -87,54 +92,30 @@ public class AlbumActivity extends BootstrapActivity {
                     albumFull = objectMapper.readValue(String.valueOf(response.getJSONObject("data")), Album.class);
                     albumTitle.setText(albumFull.getTitle());
                     albumList.setAdapter(new AlbumImageAdapter(AlbumActivity.this, albumFull.getImages()));
+                    getComments();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    AppMsg.makeText(AlbumActivity.this, getString(R.string.album_error), AppMsg.STYLE_ALERT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    AppMsg.makeText(AlbumActivity.this, getString(R.string.album_error), AppMsg.STYLE_ALERT).show();
                 }
             }
 
             @Override
             public void onFailure(Throwable e, JSONObject errorResponse) {
                 super.onFailure(e, errorResponse);
+                AppMsg.makeText(AlbumActivity.this, getString(R.string.album_error), AppMsg.STYLE_ALERT).show();
             }
 
             @Override
             public void onFailure(Throwable error, String content) {
                 super.onFailure(error, content);
+                AppMsg.makeText(AlbumActivity.this, getString(R.string.album_error), AppMsg.STYLE_ALERT).show();
             }
         });
 
-        ImgyApi.getAlbumComments(AlbumActivity.this, gAlbum.getId(), new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                super.onSuccess(response);
-                try {
-                    JSONArray jData = response.getJSONArray("data");
-                    try {
-                        comments = objectMapper.readValue(String.valueOf(jData), new TypeReference<List<Comment>>() {
-                        });
-                        if (albumFull.getAccount_url() != null) {
-                            menuList.setAdapter(new CommentAdapter(AlbumActivity.this, comments, albumFull.getAccount_url()));
-                        }
-                        else {
-                            menuList.setAdapter(new CommentAdapter(AlbumActivity.this, comments, ""));
-                        }
-                        Log.d("IMGY", "Comments count: " + Integer.toString(comments.size()));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
-            }
-
-            @Override
-            public void onFailure(Throwable e, JSONObject errorResponse) {
-                super.onFailure(e, errorResponse);
-            }
-        });
 
         setListeners();
     }
@@ -179,6 +160,46 @@ public class AlbumActivity extends BootstrapActivity {
         });
     }
 
+    private void getComments() {
+        ImgyApi.getAlbumComments(AlbumActivity.this, gAlbum.getId(), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                super.onSuccess(response);
+                try {
+                    JSONArray jData = response.getJSONArray("data");
+                    try {
+                        comments = objectMapper.readValue(String.valueOf(jData), new TypeReference<List<Comment>>() {
+                        });
+                        if (albumFull != null) {
+                            if (albumFull.getAccount_url() != null) {
+                                menuList.setAdapter(new CommentAdapter(AlbumActivity.this, comments, albumFull.getAccount_url()));
+                            }
+                            else {
+                                menuList.setAdapter(new CommentAdapter(AlbumActivity.this, comments, ""));
+                            }
+                        }
+                        else {
+                            AppMsg.makeText(AlbumActivity.this, getString(R.string.album_error), AppMsg.STYLE_ALERT).show();
+                        }
+                        Log.d("IMGY", "Comments count: " + Integer.toString(comments.size()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        AppMsg.makeText(AlbumActivity.this, getString(R.string.album_error), AppMsg.STYLE_ALERT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    AppMsg.makeText(AlbumActivity.this, getString(R.string.album_error), AppMsg.STYLE_ALERT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable e, JSONObject errorResponse) {
+                super.onFailure(e, errorResponse);
+            }
+        });
+    }
+
     private void voteOnAlbum(final String vote) {
         int tokenStatus = ImgyApi.checkForValidAuthToken(this);
         if ( tokenStatus == TOKEN_VALID) {
@@ -187,17 +208,19 @@ public class AlbumActivity extends BootstrapActivity {
                 @Override
                 public void onSuccess(JSONObject response) {
                     super.onSuccess(response);
-
+                    AppMsg.makeText(AlbumActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(AlbumActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override
                 public void onFailure(Throwable e, JSONArray errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(AlbumActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
             });
         }
@@ -206,6 +229,7 @@ public class AlbumActivity extends BootstrapActivity {
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(AlbumActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override
@@ -224,5 +248,49 @@ public class AlbumActivity extends BootstrapActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getSupportMenuInflater();
+        inflater.inflate(R.menu.imgy_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.comments:
+                menu.toggle(true);
+                return true;
+            case R.id.left:
+                previous();
+                return true;
+            case R.id.right:
+                next();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void previous() {
+        if (index != 0 ) {
+            if (gallery.get(index - 1).getClass() == GalleryImage.class) {
+                startActivity(new Intent(AlbumActivity.this, ImageActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index - 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+            else {
+                startActivity(new Intent(AlbumActivity.this, AlbumActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index - 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+        }
+    }
+
+    private void next() {
+        if (index != gallery.size() - 1 ) {
+            if (gallery.get(index + 1).getClass() == GalleryImage.class) {
+                startActivity(new Intent(AlbumActivity.this, ImageActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index + 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+            else {
+                startActivity(new Intent(AlbumActivity.this, AlbumActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index + 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+        }
+    }
 }

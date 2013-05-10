@@ -4,8 +4,12 @@ package com.corgrimm.imgy.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ToggleButton;
@@ -16,6 +20,7 @@ import com.actionbarsherlock.view.Window;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
 import com.crashlytics.android.Crashlytics;
+import com.devspark.appmsg.AppMsg;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.inject.Inject;
@@ -23,7 +28,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.slidingmenu.lib.SlidingMenu;
 import org.json.JSONObject;
 
+import java.io.*;
+
 import static com.corgrimm.imgy.core.Constants.Prefs.*;
+import static com.corgrimm.imgy.core.Constants.Intent.*;
 
 /**
  * Activity to view the carousel and view pager indicator with fragments.
@@ -43,6 +51,8 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
     protected Button myAlbums;
     protected Button upload;
 
+    File imageFile;
+
     ImageListFragment gridFragment;
 
     SlidingMenu menu;
@@ -60,7 +70,7 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
 
         menu = new SlidingMenu(this);
         menu.setMode(SlidingMenu.LEFT);
-        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
         menu.setShadowWidthRes(R.dimen.shadow_width);
         menu.setShadowDrawable(R.drawable.shadow);
         menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
@@ -70,7 +80,7 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
 
         filterMenu = new SlidingMenu(this);
         filterMenu.setMode(SlidingMenu.RIGHT);
-        filterMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        filterMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
         filterMenu.setShadowWidthRes(R.dimen.shadow_width);
         filterMenu.setShadowDrawable(R.drawable.shadowright);
         filterMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
@@ -136,6 +146,7 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(ContentActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
             });
         }
@@ -281,7 +292,9 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Crashlytics.getInstance().crash();
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, SELECT_PHOTO);
             }
         });
 
@@ -310,5 +323,105 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        switch(requestCode) {
+            case SELECT_PHOTO:
+                if(resultCode == RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    Bitmap yourSelectedImage = null;
+                    try {
+                        yourSelectedImage = decodeUri(selectedImage);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        AppMsg.makeText(ContentActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
+                    }
+
+                    imageFile = new File(getCacheDir(), "image");
+                    try {
+                        imageFile.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        AppMsg.makeText(ContentActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
+                    }
+
+                    //Convert bitmap to byte array
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    yourSelectedImage.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+                    byte[] bitmapdata = bos.toByteArray();
+
+                    //write the bytes in file
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(imageFile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        AppMsg.makeText(ContentActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
+                    }
+                    try {
+                        if (fos != null)
+                            fos.write(bitmapdata);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        AppMsg.makeText(ContentActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
+                    }
+
+                    ImgyApi.postImage(ContentActivity.this, imageFile, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            super.onSuccess(response);
+                            AppMsg.makeText(ContentActivity.this, getString(R.string.upload_success), AppMsg.STYLE_INFO).show();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable e, JSONObject errorResponse) {
+                            super.onFailure(e, errorResponse);
+                            AppMsg.makeText(ContentActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable error, String content) {
+                            super.onFailure(error, content);
+                            AppMsg.makeText(ContentActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
+                        }
+                    });
+                }
+
+                break;
+        }
+    }
+
+    private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
+
+        // Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o);
+
+        // The new size we want to scale to
+        final int REQUIRED_SIZE = 420;
+
+        // Find the correct scale value. It should be the power of 2.
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp / 2 < REQUIRED_SIZE
+                    || height_tmp / 2 < REQUIRED_SIZE) {
+                break;
+            }
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        // Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o2);
+
     }
 }

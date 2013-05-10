@@ -10,9 +10,13 @@ import com.google.inject.Inject;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 import static com.corgrimm.imgy.core.Constants.Oauth.*;
 import static com.corgrimm.imgy.core.Constants.Prefs.*;
@@ -175,5 +179,23 @@ public class ImgyApi {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void postImage(final Context context, final File image, AsyncHttpResponseHandler postEventResponseHandler) {
+        FileEntity fileEntity = new FileEntity(image,"image/jpeg");
+        params = new RequestParams();
+
+        try {
+            params.put("image", image);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+//        params.put("album", IMGUR_CLIENT_SECRET);
+//        params.put("type", "refresh_token");
+//        params.put("name", refresh);
+//        params.put("title", refresh);
+//        params.put("description", refresh);
+
+        ImgyRestClient.post(context, "image", params, postEventResponseHandler);
     }
 }

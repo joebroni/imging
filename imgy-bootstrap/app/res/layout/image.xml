@@ -4,17 +4,13 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="fill_parent"
+              android:id="@+id/viewContainer"
             android:background="#333">
     <com.loopj.android.image.SmartImageView android:layout_width="fill_parent"
                android:layout_height="fill_parent"
                android:id="@+id/imgImage"
                android:scaleType="fitCenter"
                />
-    <WebView android:layout_width="fill_parent"
-                                     android:layout_height="wrap_content"
-                                     android:id="@+id/gifView"
-                                     android:background="#333"
-                                     android:visibility="gone"/>
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:id="@+id/info"

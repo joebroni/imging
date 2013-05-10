@@ -1,22 +1,23 @@
 package com.corgrimm.imgy.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.AdapterView;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
 import com.corgrimm.imgy.models.*;
+import com.devspark.appmsg.AppMsg;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -46,7 +47,7 @@ public class ImageActivity extends BootstrapActivity {
     @Inject protected ObjectMapper objectMapper;
 
     @InjectView(R.id.imgImage) protected SmartImageView image;
-    @InjectView(R.id.gifView) protected WebView gifView;
+    @InjectView(R.id.viewContainer) protected RelativeLayout viewContainer;
 
     @InjectView(R.id.caption) protected TextView caption;
     @InjectView(R.id.upvote) protected ImageButton upvote;
@@ -86,12 +87,38 @@ public class ImageActivity extends BootstrapActivity {
 
         if (gImage.getAnimated()) {
             image.setVisibility(View.GONE);
-            gifView.setVisibility(View.VISIBLE);
-            gifView.getSettings().setUseWideViewPort(true);
+
+            WebView gifView = new WebView(ImageActivity.this);
+            gifView.setId(0X100);
+            gifView.setScrollContainer(false);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    gImage.getWidth().intValue()*2, gImage.getHeight().intValue()*2);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            gifView.setLayoutParams(params);
             gifView.loadUrl(gImage.getLink());
             gifView.setBackgroundColor(Color.parseColor("#333333"));
+            viewContainer.addView(gifView);
         }
         else {
+            // The new size we want to scale to
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int width = size.x;
+            final int REQUIRED_SIZE = size.x;
+
+            // Find the correct scale value. It should be the power of 2.
+            int width_tmp = gImage.getWidth().intValue(), height_tmp = gImage.getHeight().intValue();
+            int scale = 1;
+            while (true) {
+                if (width_tmp / 2 < REQUIRED_SIZE) {
+                    break;
+                }
+                width_tmp /= 2;
+                height_tmp /= 2;
+                scale *= 2;
+            }
+            image.setSampleSize(scale);
             image.setImageUrl(gImage.getLink());
         }
 
@@ -125,9 +152,11 @@ public class ImageActivity extends BootstrapActivity {
                         Log.d("IMGY", "Comments count: " + Integer.toString(comments.size()));
                     } catch (IOException e) {
                         e.printStackTrace();
+                        AppMsg.makeText(ImageActivity.this, getString(R.string.image_error), AppMsg.STYLE_ALERT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    AppMsg.makeText(ImageActivity.this, getString(R.string.image_error), AppMsg.STYLE_ALERT).show();
                 }
 
             }
@@ -135,6 +164,7 @@ public class ImageActivity extends BootstrapActivity {
             @Override
             public void onFailure(Throwable e, JSONObject errorResponse) {
                 super.onFailure(e, errorResponse);
+                AppMsg.makeText(ImageActivity.this, getString(R.string.image_error), AppMsg.STYLE_ALERT).show();
             }
         });
 
@@ -233,17 +263,20 @@ public class ImageActivity extends BootstrapActivity {
                 @Override
                 public void onSuccess(JSONObject response) {
                     super.onSuccess(response);
+                    AppMsg.makeText(ImageActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
 
                 }
 
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(ImageActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override
                 public void onFailure(Throwable e, JSONArray errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(ImageActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
             });
         }
@@ -252,6 +285,7 @@ public class ImageActivity extends BootstrapActivity {
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(ImageActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override

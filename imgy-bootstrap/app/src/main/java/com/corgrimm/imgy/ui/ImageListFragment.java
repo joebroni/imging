@@ -18,6 +18,7 @@ import com.corgrimm.imgy.BootstrapServiceProvider;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
 import com.corgrimm.imgy.models.*;
+import com.devspark.appmsg.AppMsg;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -96,12 +97,16 @@ public class ImageListFragment extends RoboFragment {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 } catch (JsonMappingException e) {
                     e.printStackTrace();
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 } catch (JsonParseException e) {
                     e.printStackTrace();
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 Log.d("IMGY", "Gallery Size is " + Integer.toString(gallery.size()));
@@ -139,8 +144,10 @@ public class ImageListFragment extends RoboFragment {
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
+                                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                                 }
 
                                 if (imageLinks.size() >= gallery.size() - 1) {
@@ -152,11 +159,13 @@ public class ImageListFragment extends RoboFragment {
                             @Override
                             public void onFailure(Throwable e, JSONObject errorResponse) {
                                 super.onFailure(e, errorResponse);
+                                AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                             }
 
                             @Override
                             public void onFailure(Throwable error, String content) {
                                 super.onFailure(error, content);
+                                AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                             }
                         });
                     }
@@ -166,11 +175,13 @@ public class ImageListFragment extends RoboFragment {
             @Override
             public void onFailure(Throwable e, JSONObject errorResponse) {
                 super.onFailure(e, errorResponse);
+                AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
             }
 
             @Override
             public void onFailure(Throwable e, JSONArray errorResponse) {
                 super.onFailure(e, errorResponse);
+                AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
             }
         });
 
@@ -228,12 +239,16 @@ public class ImageListFragment extends RoboFragment {
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                     } catch (JsonMappingException e) {
                         e.printStackTrace();
+                        AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                     } catch (JsonParseException e) {
                         e.printStackTrace();
+                        AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                     }
 
                     Log.d("IMGY", "Gallery Size is " + Integer.toString(gallery.size()));
@@ -252,11 +267,13 @@ public class ImageListFragment extends RoboFragment {
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override
                 public void onFailure(Throwable e, JSONArray errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
             });
 
@@ -281,6 +298,7 @@ public class ImageListFragment extends RoboFragment {
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override
@@ -293,6 +311,7 @@ public class ImageListFragment extends RoboFragment {
                 @Override
                 public void onFailure(Throwable error, String content) {
                     super.onFailure(error, content);
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
             });
         }
@@ -327,12 +346,16 @@ public class ImageListFragment extends RoboFragment {
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                     } catch (JsonMappingException e) {
                         e.printStackTrace();
+                        AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                     } catch (JsonParseException e) {
                         e.printStackTrace();
+                        AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                     }
 
                     Log.d("IMGY", "Gallery Size is " + Integer.toString(gallery.size()));
@@ -354,8 +377,10 @@ public class ImageListFragment extends RoboFragment {
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
+                                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                                 }
 
                                 if (imageLinks.size() == gallery.size()) {
@@ -366,11 +391,13 @@ public class ImageListFragment extends RoboFragment {
                             @Override
                             public void onFailure(Throwable e, JSONObject errorResponse) {
                                 super.onFailure(e, errorResponse);
+                                AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                             }
 
                             @Override
                             public void onFailure(Throwable error, String content) {
                                 super.onFailure(error, content);
+                                AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                             }
                         });
                     }
@@ -382,11 +409,13 @@ public class ImageListFragment extends RoboFragment {
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override
                 public void onFailure(Throwable e, JSONArray errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
             });
 
@@ -409,6 +438,7 @@ public class ImageListFragment extends RoboFragment {
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    AppMsg.makeText(getActivity(), getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override

@@ -145,6 +145,7 @@ public class Constants {
          * Action prefix for all intents created
          */
         public static final String INTENT_PREFIX = "com.corgrimm.imgy.";
+        public static final int SELECT_PHOTO = 1;
 
     }
 
