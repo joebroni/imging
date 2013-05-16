@@ -2,6 +2,7 @@ package com.corgrimm.imgy.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -75,13 +76,13 @@ public class CommentAdapter extends BaseAdapter {
         TextView username = (TextView) commentView.findViewById(R.id.username);
         TextView points_time = (TextView) commentView.findViewById(R.id.points_time);
         TextView commentString = (TextView) commentView.findViewById(R.id.comment);
-        TextView op = (TextView) commentView.findViewById(R.id.op);
+        //TextView op = (TextView) commentView.findViewById(R.id.op);
 
         if (opId.equals(comment.getAuthor())) {
-            op.setVisibility(View.VISIBLE);
+            username.setTextColor(Color.parseColor("#FF00FF"));
         }
         else {
-            op.setVisibility(View.GONE);
+            username.setTextColor(Color.parseColor("#00FF00"));
         }
 
         username.setText(comment.getAuthor());

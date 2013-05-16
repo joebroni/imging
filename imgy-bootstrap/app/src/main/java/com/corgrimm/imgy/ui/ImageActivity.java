@@ -1,6 +1,7 @@
 package com.corgrimm.imgy.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.*;
 import com.actionbarsherlock.view.Menu;
@@ -52,6 +54,10 @@ public class ImageActivity extends BootstrapActivity {
     @InjectView(R.id.caption) protected TextView caption;
     @InjectView(R.id.upvote) protected ImageButton upvote;
     @InjectView(R.id.downvote) protected ImageButton downvote;
+    @InjectView(R.id.info) protected LinearLayout info;
+    @InjectView(R.id.downvotes) protected TextView downvotes;
+    @InjectView(R.id.upvotes) protected TextView upvotes;
+    @InjectView(R.id.author) protected TextView author;
 
     @InjectExtra(GALLERY) protected ArrayList<Object> gallery;
     @InjectExtra(INDEX) protected int index;
@@ -91,13 +97,40 @@ public class ImageActivity extends BootstrapActivity {
             WebView gifView = new WebView(ImageActivity.this);
             gifView.setId(0X100);
             gifView.setScrollContainer(false);
+
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    gImage.getWidth().intValue()*2, gImage.getHeight().intValue()*2);
+                    ViewGroup.LayoutParams.MATCH_PARENT, gImage.getHeight().intValue()*3);
             params.addRule(RelativeLayout.CENTER_IN_PARENT);
             gifView.setLayoutParams(params);
-            gifView.loadUrl(gImage.getLink());
+            String html = "<body >\n <img id=\"resizeImage\" src=\"" + gImage.getLink() + "\" width=\"100%\" alt=\"\" />\n </body>";
+            gifView.loadData(html, "text/html", "utf-8");
+
             gifView.setBackgroundColor(Color.parseColor("#333333"));
             viewContainer.addView(gifView);
+            info.bringToFront();
+        }
+        else if (gImage.getHeight().intValue()/gImage.getWidth().intValue() > 3) {
+            image.setVisibility(View.GONE);
+
+            WebView gifView = new WebView(ImageActivity.this);
+            gifView.setId(0X100);
+            gifView.setScrollContainer(false);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            gifView.setLayoutParams(params);
+//            gifView.loadUrl(gImage.getLink());
+            String html = "<body >\n <img id=\"resizeImage\" src=\"" + gImage.getLink() + "\" width=\"100%\" alt=\"\" />\n </body>";
+            gifView.loadData(html, "text/html", "utf-8");
+            gifView.setBackgroundColor(Color.parseColor("#333333"));
+            gifView.getSettings().setSupportZoom(true);
+            gifView.getSettings().setBuiltInZoomControls(true);
+            viewContainer.addView(gifView);
+            info.bringToFront();
         }
         else {
             // The new size we want to scale to
@@ -134,6 +167,11 @@ public class ImageActivity extends BootstrapActivity {
         }
 
         caption.setText(gImage.getTitle());
+        if (gImage.getUps() != null)
+            upvotes.setText(gImage.getUps().toString());
+        if (gImage.getDowns() != null)
+            downvotes.setText(gImage.getDowns().toString());
+        author.setText(gImage.getAccount_url());
 
         ImgyApi.getImageComments(ImageActivity.this, gImage.getId(), new JsonHttpResponseHandler() {
             @Override
@@ -263,8 +301,6 @@ public class ImageActivity extends BootstrapActivity {
                 @Override
                 public void onSuccess(JSONObject response) {
                     super.onSuccess(response);
-                    AppMsg.makeText(ImageActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
-
                 }
 
                 @Override
@@ -303,5 +339,4 @@ public class ImageActivity extends BootstrapActivity {
             startActivity(intent);
         }
     }
-
 }

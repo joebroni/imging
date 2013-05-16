@@ -18,13 +18,46 @@
                     android:layout_alignParentBottom="true"
                     android:gravity="center"
                     >
+        <LinearLayout android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:orientation="vertical">
         <TextView android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:id="@+id/caption"
                   android:layout_weight="1"
                   android:text="This is the caption for the image."
                   android:textColor="#fff"
-            android:padding="20dp"/>
+            android:paddingTop="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"/>
+            <LinearLayout android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:paddingLeft="20dp"
+                          android:paddingBottom="20dp"
+                          >
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/upvotes"
+                          android:textSize="10dp"
+                          android:text="0"
+                          android:textColor="#0f0"/>
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/downvotes"
+                          android:textSize="10dp"
+                          android:text="0"
+                          android:textColor="#f00"/>
+                <TextView android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/author"
+                          android:layout_weight="1"
+                          android:textSize="10dp"
+                          android:text="Derpy"
+                          android:textColor="#f0f"
+                          android:layout_marginLeft="10dp"/>
+                          </LinearLayout>
+        </LinearLayout>
         <ImageButton android:layout_width="30dp"
                      android:layout_height="30dp"
                      android:id="@+id/upvote"

@@ -1,6 +1,7 @@
 package com.corgrimm.imgy.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,7 +25,6 @@ public class CommentsActivity extends BootstrapActivity {
     @InjectView(R.id.username) protected TextView username;
     @InjectView(R.id.points_time) protected TextView pointsTime;
     @InjectView(R.id.comment) protected TextView commentString;
-    @InjectView(R.id.op) protected TextView op;
 
     @InjectExtra(COMMENTS) protected Comment comment;
     @InjectExtra(OP) protected String opId;
@@ -43,10 +43,10 @@ public class CommentsActivity extends BootstrapActivity {
         commentString.setText(comment.getComment());
 
         if (opId.equals(comment.getAuthor())) {
-            op.setVisibility(View.VISIBLE);
+            username.setTextColor(Color.parseColor("#FF00FF"));
         }
         else {
-            op.setVisibility(View.GONE);
+            username.setTextColor(Color.parseColor("#00FF00"));
         }
 
         commentsList.setAdapter(new CommentAdapter(CommentsActivity.this, comment.getChildren(), opId));

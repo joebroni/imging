@@ -48,6 +48,9 @@ public class AlbumActivity extends BootstrapActivity {
     @InjectView(R.id.albumTitle) protected TextView albumTitle;
     @InjectView(R.id.upvote) protected ImageButton upvote;
     @InjectView(R.id.downvote) protected ImageButton downvote;
+    @InjectView(R.id.downvotes) protected TextView downvotes;
+    @InjectView(R.id.upvotes) protected TextView upvotes;
+    @InjectView(R.id.author) protected TextView author;
 
     @InjectExtra(GALLERY) protected ArrayList<Object> gallery;
     @InjectExtra(INDEX) protected int index;
@@ -83,6 +86,17 @@ public class AlbumActivity extends BootstrapActivity {
 
         gAlbum = (GalleryAlbum) gallery.get(index);
 
+        if (gAlbum.getVote() != null) {
+            if (gAlbum.getVote().equals(UP_VOTE_STRING)) {
+                upvote.setImageDrawable(getResources().getDrawable(R.drawable.up_green_256));
+                vote_status = UPVOTE;
+            }
+            else if (gAlbum.getVote().equals(DOWN_VOTE_STRING)) {
+                downvote.setImageDrawable(getResources().getDrawable(R.drawable.down_red_256));
+                vote_status = DOWNVOTE;
+            }
+        }
+
         ImgyApi.getAlbumImageInfo(AlbumActivity.this, gAlbum.getId(), gAlbum.getCover(), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -91,6 +105,11 @@ public class AlbumActivity extends BootstrapActivity {
                 try {
                     albumFull = objectMapper.readValue(String.valueOf(response.getJSONObject("data")), Album.class);
                     albumTitle.setText(albumFull.getTitle());
+                    if (gAlbum.getUps() != null)
+                        upvotes.setText(gAlbum.getUps().toString());
+                    if (gAlbum.getDowns() != null)
+                        downvotes.setText(gAlbum.getDowns().toString());
+                    author.setText(gAlbum.getAccount_url());
                     albumList.setAdapter(new AlbumImageAdapter(AlbumActivity.this, albumFull.getImages()));
                     getComments();
                 } catch (IOException e) {
@@ -208,7 +227,6 @@ public class AlbumActivity extends BootstrapActivity {
                 @Override
                 public void onSuccess(JSONObject response) {
                     super.onSuccess(response);
-                    AppMsg.makeText(AlbumActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
                 }
 
                 @Override

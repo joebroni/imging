@@ -73,18 +73,36 @@ public class AlbumImageAdapter extends BaseAdapter {
         title.setVisibility(View.GONE);
         description.setVisibility(View.GONE);
 
+        if (viewContainer.getChildCount() > 1) {
+            int i = 0;
+            while (i < viewContainer.getChildCount()) {
+                if (viewContainer.getChildAt(i).getClass() == WebView.class) {
+                    viewContainer.removeViewAt(i);
+                    break;
+                }
+                i++;
+            }
+        }
+
         if (image.getAnimated()) {
             imageView.setVisibility(View.GONE);
 
             WebView gifView = new WebView(ctx);
             gifView.setId(0X100);
             gifView.setScrollContainer(false);
+            Display display = ((Activity)ctx).getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    image.getWidth().intValue()*2, image.getHeight().intValue()*2);
+                    ViewGroup.LayoutParams.MATCH_PARENT, image.getHeight().intValue()*3);
             params.addRule(RelativeLayout.CENTER_IN_PARENT);
             gifView.setLayoutParams(params);
-            gifView.loadUrl(image.getLink());
+            String html = "<body >\n <img id=\"resizeImage\" src=\"" + image.getLink() + "\" width=\"100%\" alt=\"\" />\n </body>";
+            gifView.loadData(html, "text/html", "utf-8");
             gifView.setBackgroundColor(Color.parseColor("#333333"));
+            description.bringToFront();
+            title.bringToFront();
             viewContainer.addView(gifView);
         }
         else {
