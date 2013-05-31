@@ -10,8 +10,12 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -19,9 +23,11 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
+import com.corgrimm.imgy.core.Constants;
 import com.crashlytics.android.Crashlytics;
 import com.devspark.appmsg.AppMsg;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flurry.android.FlurryAgent;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
 import com.google.inject.Inject;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -29,6 +35,8 @@ import com.slidingmenu.lib.SlidingMenu;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.corgrimm.imgy.core.Constants.Prefs.*;
 import static com.corgrimm.imgy.core.Constants.Intent.*;
@@ -46,6 +54,7 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
     protected ToggleButton score;
     protected ToggleButton newest;
     protected ToggleButton popular;
+    protected EditText subreddit;
 
     protected Button myImages;
     protected Button myAlbums;
@@ -95,6 +104,7 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
         score = (ToggleButton) findViewById(R.id.score);
         newest = (ToggleButton) findViewById(R.id.newest);
         popular = (ToggleButton) findViewById(R.id.popular);
+        subreddit = (EditText) findViewById(R.id.subreddit);
 
         myImages = (Button) findViewById(R.id.my_images);
         myAlbums = (Button) findViewById(R.id.my_albums);
@@ -106,6 +116,9 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
 
         String collection = sharedPrefs.getString(COLLECTION, VIRAL);
         String filter = sharedPrefs.getString(FILTER, POPULAR);
+        String subr = sharedPrefs.getString(SUBREDDIT, null);
+
+
 
         if (collection.equals(VIRAL)) {
             viral.setChecked(true);
@@ -124,6 +137,12 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
             popular.setChecked(true);
         }
 
+        if (subr != null) {
+            subreddit.setText(subr);
+            viral.setChecked(false);
+            user.setChecked(false);
+            score.setChecked(false);
+        }
     }
 
     @Override
@@ -152,6 +171,20 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
         }
     }
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        FlurryAgent.onStartSession(this, Constants.Flurry.FLURRY_API_KEY);
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
+
     private void setupActionBar() {
 
         // Change the home icon to the three little lines
@@ -175,6 +208,11 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
         viral.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FlurryAgent.logEvent(Constants.Flurry.VIRAL_CLICKED);
+                sharedPrefs.edit()
+                        .putString(SUBREDDIT, null)
+                        .commit();
+                subreddit.setText("");
                 if (viral.isChecked()) {
                     user.setChecked(false);
                     score.setChecked(false);
@@ -190,12 +228,18 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
 //                            .commit();
 //                    gridFragment.refreshGrid();
                 }
+                filterMenu.toggle(true);
             }
         });
 
         user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FlurryAgent.logEvent(Constants.Flurry.USER_CLICKED);
+                sharedPrefs.edit()
+                        .putString(SUBREDDIT, null)
+                        .commit();
+                subreddit.setText("");
                 if (user.isChecked()) {
                     viral.setChecked(false);
                     score.setChecked(false);
@@ -211,12 +255,18 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
                             .commit();
                     gridFragment.refreshGrid();
                 }
+                filterMenu.toggle(true);
             }
         });
 
         score.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FlurryAgent.logEvent(Constants.Flurry.SCORE_CLICKED);
+                sharedPrefs.edit()
+                        .putString(SUBREDDIT, null)
+                        .commit();
+                subreddit.setText("");
                 if (score.isChecked()) {
                     user.setChecked(false);
                     viral.setChecked(false);
@@ -232,12 +282,14 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
                             .commit();
                     gridFragment.refreshGrid();
                 }
+                filterMenu.toggle(true);
             }
         });
 
         newest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FlurryAgent.logEvent(Constants.Flurry.NEWEST_CLICKED);
                 if (newest.isChecked()) {
                     popular.setChecked(false);
                     sharedPrefs.edit()
@@ -252,12 +304,14 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
 //                            .commit();
 //                    gridFragment.refreshGrid();
                 }
+                filterMenu.toggle(true);
             }
         });
 
         popular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FlurryAgent.logEvent(Constants.Flurry.POPULAR_CLICKED);
                 if (popular.isChecked()) {
                     newest.setChecked(false);
                     sharedPrefs.edit()
@@ -272,6 +326,7 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
                             .commit();
                     gridFragment.refreshGrid();
                 }
+                filterMenu.toggle(true);
             }
         });
 
@@ -279,6 +334,8 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
             @Override
             public void onClick(View view) {
                 gridFragment.getMyImages();
+                menu.toggle(true);
+                FlurryAgent.logEvent(Constants.Flurry.VIEW_MY_IMAGES);
             }
         });
 
@@ -286,6 +343,8 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
             @Override
             public void onClick(View view) {
                 gridFragment.getMyAlbums();
+                menu.toggle(true);
+                FlurryAgent.logEvent(Constants.Flurry.VIEW_MY_ALBUMS);
             }
         });
 
@@ -295,6 +354,28 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+                FlurryAgent.logEvent(Constants.Flurry.UPLOAD_IMAGE);
+            }
+        });
+
+        subreddit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId== EditorInfo.IME_ACTION_GO){
+                    sharedPrefs.edit()
+                            .putString(SUBREDDIT, subreddit.getText().toString())
+                            .commit();
+                    gridFragment.refreshGrid();
+                    filterMenu.toggle(true);
+                    viral.setChecked(false);
+                    user.setChecked(false);
+                    score.setChecked(false);
+                    Map<String, String> articleParams = new HashMap<String, String>();
+                    articleParams.put("r", subreddit.getText().toString());
+                    FlurryAgent.logEvent(Constants.Flurry.SUBREDDIT, articleParams);
+                }
+                return false;
             }
         });
 
@@ -316,9 +397,11 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
                 return true;
             case R.id.filter:
                 filterMenu.toggle(true);
+                FlurryAgent.logEvent(Constants.Flurry.FILTER_BUTTON_CLICKED);
                 return true;
             case R.id.refresh:
                 gridFragment.refreshGrid();
+                FlurryAgent.logEvent(Constants.Flurry.REFRESH_GALLERY);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -381,12 +464,14 @@ public class ContentActivity extends RoboSherlockFragmentActivity {
                         public void onFailure(Throwable e, JSONObject errorResponse) {
                             super.onFailure(e, errorResponse);
                             AppMsg.makeText(ContentActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
+                            FlurryAgent.logEvent(Constants.Flurry.IMAGE_UPLOAD_FAILURE);
                         }
 
                         @Override
                         public void onFailure(Throwable error, String content) {
                             super.onFailure(error, content);
                             AppMsg.makeText(ContentActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
+                            FlurryAgent.logEvent(Constants.Flurry.IMAGE_UPLOAD_FAILURE);
                         }
                     });
                 }

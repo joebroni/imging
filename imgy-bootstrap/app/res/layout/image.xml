@@ -48,16 +48,27 @@
                           android:textSize="10dp"
                           android:text="0"
                           android:textColor="#f00"/>
-                <TextView android:layout_width="fill_parent"
+                <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:id="@+id/author"
                           android:layout_weight="1"
+                          android:id="@+id/author"
                           android:textSize="10dp"
-                          android:text="Derpy"
+                          android:singleLine="true"
+                          android:text="ThisisgoingtobethelongestimgurnamepossiblebecauseIneedto"
                           android:textColor="#f0f"
                           android:layout_marginLeft="10dp"/>
+
                           </LinearLayout>
         </LinearLayout>
+        <ImageButton android:layout_width="20dp"
+                     android:layout_height="20dp"
+                     android:id="@+id/new_comment"
+                     android:src="@drawable/comment_button"
+                     android:scaleType="fitCenter"
+                     android:background="#0000"
+                     android:layout_marginRight="10dp"
+                     android:layout_marginLeft="20dp"
+                     android:layout_marginTop="3dp"/>
         <ImageButton android:layout_width="30dp"
                      android:layout_height="30dp"
                      android:id="@+id/upvote"

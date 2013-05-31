@@ -53,4 +53,11 @@
     <string name="image_error">Oops! There was a problem with the album you are trying to view.</string>
     <string name="general_error">Oops! It looks like you broke something… way to go.</string>
     <string name="upload_success">Image uploaded successfully.</string>
+
+    <string name="subreddit">subreddit</string>
+    <string name="char_count_format">%d / 140</string>
+    <string name="comment_hint">enter comment</string>
+    <string name="submit">submit</string>
+    <string name="comment_submit_success">Comment successfully submitted.</string>
+    <string name="no_images_available">Sorry! There are no images in this gallery!</string>
 </resources>

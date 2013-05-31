@@ -13,7 +13,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
+import com.corgrimm.imgy.core.Constants;
+import com.corgrimm.imgy.dialog.CommentDialog;
 import com.corgrimm.imgy.models.Comment;
+import com.flurry.android.FlurryAgent;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -92,6 +95,7 @@ public class CommentAdapter extends BaseAdapter {
 
         final ImageButton upvote = (ImageButton) commentView.findViewById(R.id.upvote);
         final ImageButton downvote = (ImageButton) commentView.findViewById(R.id.downvote);
+        final ImageButton newComment = (ImageButton) commentView.findViewById(R.id.new_comment);
 
         if (comment.getVote() != null) {
             if (comment.getVote().equals(UP_VOTE_STRING)) {
@@ -111,42 +115,40 @@ public class CommentAdapter extends BaseAdapter {
         upvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (vote_status == UPVOTE) {
-//                    upvote.setImageDrawable(getResources().getDrawable(R.drawable.up_white_256));
-//                    vote_status = NO_VOTE;
-//                }
-//                else {
+                FlurryAgent.logEvent(Constants.Flurry.UP_VOTE);
                 if (vote_status == DOWNVOTE) {
                     downvote.setImageDrawable(ctx.getResources().getDrawable(R.drawable.down_white_256));
                 }
                 upvote.setImageDrawable(ctx.getResources().getDrawable(R.drawable.up_green_256));
                 vote_status = UPVOTE;
                 voteOnComment(comment, UP_VOTE_STRING);
-//                }
             }
         });
 
         downvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (vote_status == DOWNVOTE) {
-//                    downvote.setImageDrawable(getResources().getDrawable(R.drawable.down_white_256));
-//                    vote_status = NO_VOTE;
-//                }
-//                else {
+                FlurryAgent.logEvent(Constants.Flurry.DOWN_VOTE);
                 if (vote_status == UPVOTE) {
                     upvote.setImageDrawable(ctx.getResources().getDrawable(R.drawable.up_white_256));
                 }
                 downvote.setImageDrawable(ctx.getResources().getDrawable(R.drawable.down_red_256));
                 vote_status = DOWNVOTE;
                 voteOnComment(comment, DOWN_VOTE_STRING);
-//                }
+            }
+        });
+
+        newComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new CommentDialog(ctx, comment.getImageId(), comment.getId().toString()).show();
             }
         });
 
         commentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FlurryAgent.logEvent(Constants.Flurry.COMMENT_EXPAND);
                 if (comment.getChildren().size() > 0) {
                     ctx.startActivity(new Intent(ctx, CommentsActivity.class).putExtra(COMMENTS, comment).putExtra(OP, opId));
                 }
@@ -181,10 +183,12 @@ public class CommentAdapter extends BaseAdapter {
             });
         }
         else if (tokenStatus == EXPIRED_TOKEN) {
+            FlurryAgent.logEvent(Constants.Flurry.TOKEN_REFRESH_CALLED);
             ImgyApi.getAccessTokenFromRefresh(ctx, new JsonHttpResponseHandler() {
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
+                    FlurryAgent.logEvent(Constants.Flurry.TOKEN_REFRESH_FAILED);
                 }
 
                 @Override

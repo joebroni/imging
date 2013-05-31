@@ -31,6 +31,12 @@
 
     <developers>
         <developer>
+            <email>joe@corgrimm.com</email>
+            <name>Joe Anderson</name>
+            <url>https://github.com/joebroni</url>
+            <id>joebroni</id>
+        </developer>
+        <developer>
             <email>donn@donnfelker.com</email>
             <name>Donn Felker</name>
             <url>https://github.com/donnfelker</url>

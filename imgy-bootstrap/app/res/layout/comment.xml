@@ -36,12 +36,24 @@
                   android:textSize="10sp"
             android:layout_marginLeft="5dp"/>
     </LinearLayout>
-    <TextView android:layout_width="wrap_content"
+        <LinearLayout android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+    <TextView android:layout_width="fill_parent"
               android:layout_height="wrap_content"
+              android:layout_weight="1"
               android:id="@+id/comment"
               android:text="Go home, you are drunk."
               android:textSize="12sp"
         android:textColor="#fff"/>
+        <ImageButton android:layout_width="15dp"
+                     android:layout_height="15dp"
+                     android:id="@+id/new_comment"
+                     android:src="@drawable/comment_button"
+                     android:scaleType="fitCenter"
+                     android:background="#0000"
+                     android:layout_marginTop="2dp"/>
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout android:layout_width="wrap_content"
                   android:layout_height="wrap_content"

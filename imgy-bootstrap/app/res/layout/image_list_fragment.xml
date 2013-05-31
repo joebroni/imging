@@ -5,7 +5,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#333">
-
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/sorry"
+              android:text="@string/no_images_available"
+              android:textColor="#fff"
+              android:textSize="16dp"
+              android:gravity="center"
+              android:layout_centerInParent="true"
+              android:visibility="gone"/>
     <ProgressBar android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:id="@+id/loading"

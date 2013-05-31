@@ -90,9 +90,6 @@ public class AlbumImageAdapter extends BaseAdapter {
             WebView gifView = new WebView(ctx);
             gifView.setId(0X100);
             gifView.setScrollContainer(false);
-            Display display = ((Activity)ctx).getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, image.getHeight().intValue()*3);
@@ -110,10 +107,7 @@ public class AlbumImageAdapter extends BaseAdapter {
 
             // The new size we want to scale to
             Display display =((Activity) ctx).getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            int width = size.x;
-            final int REQUIRED_SIZE = size.x;
+            final int REQUIRED_SIZE = display.getWidth();
 
             // Find the correct scale value. It should be the power of 2.
             int width_tmp = image.getWidth().intValue(), height_tmp = image.getHeight().intValue();

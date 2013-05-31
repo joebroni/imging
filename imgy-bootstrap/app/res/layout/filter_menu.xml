@@ -7,107 +7,147 @@
               android:background="#2f2f2f"
               android:gravity="center_horizontal">
 
-    <TextView
+    <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/images_of_today"
-        android:text="Choose your gallery"
-        android:textColor="#0f0"
-        android:textSize="18dp"
-        android:gravity="center"
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="15dp"/>
+        android:layout_height="fill_parent">
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="6dp"
-        android:background="@drawable/sliding_menu_item_separator"
-        />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-    <ToggleButton
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/viral"
-        android:textOn="most viral"
-        android:textOff="most viral"
-        android:background="@drawable/toggle_button"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/images_of_today"
+                android:text="Choose your gallery"
+                android:textColor="#0f0"
+                android:textSize="18dp"
+                android:gravity="center"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="15dp"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="6dp"
+                android:background="@drawable/sliding_menu_item_separator"
+                />
+
+            <ToggleButton
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/viral"
+                android:textOn="most viral"
+                android:textOff="most viral"
+                android:background="@drawable/toggle_button"/>
 
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="6dp"
-        android:background="@drawable/sliding_menu_item_separator"
-        />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="6dp"
+                android:background="@drawable/sliding_menu_item_separator"
+                />
 
-    <ToggleButton
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/user"
-        android:textOn="user submitted"
-        android:textOff="user submitted"
-        android:background="@drawable/toggle_button"/>
+            <ToggleButton
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/user"
+                android:textOn="user submitted"
+                android:textOff="user submitted"
+                android:background="@drawable/toggle_button"/>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="6dp"
-        android:background="@drawable/sliding_menu_item_separator"
-        />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="6dp"
+                android:background="@drawable/sliding_menu_item_separator"
+                />
 
-    <ToggleButton
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/score"
-        android:textOn="highest scoring"
-        android:textOff="highest scoring"
-        android:background="@drawable/toggle_button"/>
+            <ToggleButton
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/score"
+                android:textOn="highest scoring"
+                android:textOff="highest scoring"
+                android:background="@drawable/toggle_button"/>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="6dp"
-        android:background="@drawable/sliding_menu_item_separator"
-        />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="6dp"
+                android:background="@drawable/sliding_menu_item_separator"
+                />
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/images_of_today"
-        android:text="images of today, sorted by"
-        android:textSize="18dp"
-        android:textColor="#0f0"
-        android:gravity="center"
-        android:layout_margin="15dp"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/images_of_today"
+                android:text="images of today, sorted by"
+                android:textSize="18dp"
+                android:textColor="#0f0"
+                android:gravity="center"
+                android:layout_margin="15dp"/>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="6dp"
-        android:background="@drawable/sliding_menu_item_separator"
-        />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="6dp"
+                android:background="@drawable/sliding_menu_item_separator"
+                />
 
-    <ToggleButton
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/newest"
-        android:textOn="newest"
-        android:textOff="newest"
-        android:background="@drawable/toggle_button"/>
+            <ToggleButton
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/newest"
+                android:textOn="newest"
+                android:textOff="newest"
+                android:background="@drawable/toggle_button"/>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="6dp"
-        android:background="@drawable/sliding_menu_item_separator"/>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="6dp"
+                android:background="@drawable/sliding_menu_item_separator"/>
 
-    <ToggleButton
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/popular"
-        android:textOn="popularity"
-        android:textOff="popularity"
-        android:background="@drawable/toggle_button"/>
+            <ToggleButton
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/popular"
+                android:textOn="popularity"
+                android:textOff="popularity"
+                android:background="@drawable/toggle_button"/>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="6dp"
-        android:background="@drawable/sliding_menu_item_separator"
-        />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="6dp"
+                android:background="@drawable/sliding_menu_item_separator"
+                />
 
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:id="@+id/images_of_today"
+                    android:text="r/"
+                    android:textSize="16dp"
+                    android:textColor="#fff"
+                    android:gravity="center"/>
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/subreddit"
+                    android:hint="@string/subreddit"
+                    android:singleLine="true"
+                    android:inputType="text"
+                    android:imeActionId="2"
+                    android:imeOptions="actionGo"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

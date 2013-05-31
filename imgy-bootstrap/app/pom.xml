@@ -18,6 +18,16 @@
     <properties>
         <abs.version>4.2.0</abs.version>
     </properties>
+
+    <repositories>
+
+        <repository>
+            <id>third.party.closed.source.repo</id>
+            <url>file://${basedir}/../maven_repo_3rd_party</url>
+        </repository>
+
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.google.android</groupId>
@@ -127,6 +137,11 @@
             <groupId>com.crashlytics.android</groupId>
             <artifactId>crashlytics</artifactId>
             <version>0.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.flurry</groupId>
+            <artifactId>FlurryAgent</artifactId>
+            <version>3.2</version>
         </dependency>
     </dependencies>
     <build>

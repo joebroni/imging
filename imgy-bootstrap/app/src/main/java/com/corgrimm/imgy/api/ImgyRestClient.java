@@ -58,10 +58,8 @@ public class ImgyRestClient {
                 }
             });
             alert.show();
-//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
         } else {
             client.get(getAbsoluteUrl(context, url), params, responseHandler);
-//            JLogger.getInstance(context).log("Jingit: Get url: " + getAbsoluteUrl(context, url));
             Log.d("IMGY", "Get url: " + url);
         }
 
@@ -81,18 +79,15 @@ public class ImgyRestClient {
                 }
             });
             alert.show();
-//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
         } else {
             client.get(url, params, responseHandler);
-//            JLogger.getInstance(context).log("Jingit: Get url: " + url);
             Log.d("IMGY", "Get raw url: " + url);
         }
     }
 
     public static void post(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-//        client.addHeader("Content-Type", "application/json");
-//        client.setUserAgent(getAgentString(context));
-
+        setSocketFactory(client);
+        setHeaders(context);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -103,17 +98,15 @@ public class ImgyRestClient {
                 }
             });
             alert.show();
-//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
         } else {
             client.post(getAbsoluteUrl(context, url), params, responseHandler);
-//            JLogger.getInstance(context).log("Jingit: Post url: " + getAbsoluteUrl(context, url));
             Log.d("IMGY", "Post url: " + url);
         }
     }
 
     public static void postWithBody(final Context context, String url, HttpEntity entity, String contentType, AsyncHttpResponseHandler responseHandler) {
         setSocketFactory(client);
-//        client.setUserAgent(getAgentString(context));
+        setHeaders(context);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -124,61 +117,15 @@ public class ImgyRestClient {
                 }
             });
             alert.show();
-//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
         } else {
             client.post(context, getAbsoluteUrl(context, url), entity, contentType, responseHandler);
-//            JLogger.getInstance(context).log("Jingit: Post with Body url: " + getAbsoluteUrl(context, url));
             Log.d("IMGY", "Post with Body url: " + url);
         }
     }
 
-//    public static void postSecureWithBody(final Context context, String url, HttpEntity entity, String contentType, AsyncHttpResponseHandler responseHandler) {
-//        try {
-//            KeyStore trustStore = null;
-//            try {
-//                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-//            } catch (KeyStoreException e) {
-//                e.printStackTrace();
-//            }
-//            trustStore.load(null, null);
-//            try {
-//                client.setSSLSocketFactory(new MySSLSocketFactory(trustStore));
-//            } catch (KeyManagementException e) {
-//                e.printStackTrace();
-//            } catch (KeyStoreException e) {
-//                e.printStackTrace();
-//            } catch (UnrecoverableKeyException e) {
-//                e.printStackTrace();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        } catch (CertificateException e) {
-//            e.printStackTrace();
-//        }
-//        client.addHeader("X-Requested-By", "jingit-csrf");
-//        client.setUserAgent(getAgentString(context));
-//        if (!ImgyApi.CheckInternet(context)) {
-//            AlertDialog alert = new AlertDialog.Builder(context).create();
-//            alert.setTitle(context.getString(R.string.oops));
-//            alert.setMessage(context.getString(R.string.error_no_connection));
-//            alert.setButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//                    ((Activity) context).finish();
-//                }
-//            });
-//            alert.show();
-////            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
-//        } else {
-//            client.post(context, getSecureAbsoluteUrl(context, url), entity, contentType, responseHandler);
-////            JLogger.getInstance(context).log("Jingit: Post with Body url: " + getSecureAbsoluteUrl(context, url));
-//        }
-//    }
-
     public static void postRawUrlWithBody(final Context context, String url, HttpEntity entity, String contentType, AsyncHttpResponseHandler responseHandler) {
         setSocketFactory(client);
-//        client.setUserAgent(getAgentString(context));
+        setHeaders(context);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -189,17 +136,15 @@ public class ImgyRestClient {
                 }
             });
             alert.show();
-//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
         } else {
             client.post(context, url, entity, contentType, responseHandler);
-//            JLogger.getInstance(context).log("Jingit: Post with Body url: " + url);
             Log.d("IMGY", "Post raw url with body url: " + url);
         }
     }
 
     public static void postRawUrl(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         setSocketFactory(client);
-//        client.setUserAgent(getAgentString(context));
+        setHeaders(context);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -210,17 +155,15 @@ public class ImgyRestClient {
                 }
             });
             alert.show();
-//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
         } else {
             client.post(context, url, params, responseHandler);
-//            JLogger.getInstance(context).log("Jingit: Post url: " + url);
             Log.d("IMGY", "Post raw url: " + url);
         }
     }
 
     public static void deleteRawUrl(final Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         setSocketFactory(client);
-//        client.setUserAgent(getAgentString(context));
+        setHeaders(context);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -231,17 +174,15 @@ public class ImgyRestClient {
                 }
             });
             alert.show();
-//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
         } else {
             client.delete(context, url, responseHandler);
-//            JLogger.getInstance(context).log("Jingit: Delete url: " + url);
             Log.d("IMGY", "Delete raw url: " + url);
         }
     }
 
     public static void putRawUrl(final Context context, String url, HttpEntity entity, String contentTyoe, AsyncHttpResponseHandler responseHandler) {
-         setSocketFactory(client);
-//        client.setUserAgent(getAgentString(context));
+        setSocketFactory(client);
+        setHeaders(context);
         if (!ImgyApi.CheckInternet(context)) {
             AlertDialog alert = new AlertDialog.Builder(context).create();
             alert.setTitle(context.getString(R.string.oops));
@@ -252,29 +193,11 @@ public class ImgyRestClient {
                 }
             });
             alert.show();
-//            FlurryAgent.logEvent(context.getString(R.string.flurry_event_no_connectivity));
         } else {
             client.put(context, url, entity, contentTyoe, responseHandler);
-//            JLogger.getInstance(context).log("Jingit: Put url: " + url);
             Log.d("IMGY", "Put raw url: " + url);
         }
     }
-
-//    public static void getSecure(Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-////        client.addHeader("Content-Type", "application/json");
-////        client.addHeader("User_Agent", getAgentString(context));
-//        client.addHeader("X-Requested-By", "jingit-csrf");
-//        client.get(getSecureAbsoluteUrl(context, url), params, responseHandler);
-////        JLogger.getInstance(context).log("Jingit: Get Secure url: " + getAbsoluteUrl(context, url));
-//    }
-//
-//    public static void postSecure(Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-////        client.addHeader("Content-Type", "application/json");
-////        client.addHeader("User_Agent", getAgentString(context));
-//        client.addHeader("X-Requested-By", "jingit-csrf");
-//        client.post(getSecureAbsoluteUrl(context, url), params, responseHandler);
-////        JLogger.getInstance(context).log("Jingit: Post Secure url: " + getAbsoluteUrl(context, url));
-//    }
 
     public static String getAbsoluteUrl(Context context, String relativeUrl) {
             return IMGY_BASE_URL +relativeUrl;

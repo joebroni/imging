@@ -14,6 +14,8 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.corgrimm.imgy.R;
 import com.corgrimm.imgy.api.ImgyApi;
+import com.corgrimm.imgy.core.Constants;
+import com.corgrimm.imgy.dialog.CommentDialog;
 import com.corgrimm.imgy.models.Album;
 import com.corgrimm.imgy.models.Comment;
 import com.corgrimm.imgy.models.GalleryAlbum;
@@ -21,6 +23,7 @@ import com.corgrimm.imgy.models.GalleryImage;
 import com.devspark.appmsg.AppMsg;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flurry.android.FlurryAgent;
 import com.google.inject.Inject;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.slidingmenu.lib.SlidingMenu;
@@ -51,6 +54,7 @@ public class AlbumActivity extends BootstrapActivity {
     @InjectView(R.id.downvotes) protected TextView downvotes;
     @InjectView(R.id.upvotes) protected TextView upvotes;
     @InjectView(R.id.author) protected TextView author;
+    @InjectView(R.id.new_comment)protected ImageButton comment;
 
     @InjectExtra(GALLERY) protected ArrayList<Object> gallery;
     @InjectExtra(INDEX) protected int index;
@@ -143,7 +147,7 @@ public class AlbumActivity extends BootstrapActivity {
         upvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+            FlurryAgent.logEvent(Constants.Flurry.UP_VOTE);
             if (vote_status == DOWNVOTE) {
                 downvote.setImageDrawable(getResources().getDrawable(R.drawable.down_white_256));
             }
@@ -157,7 +161,7 @@ public class AlbumActivity extends BootstrapActivity {
         downvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+            FlurryAgent.logEvent(Constants.Flurry.DOWN_VOTE);
             if (vote_status == UPVOTE) {
                 upvote.setImageDrawable(getResources().getDrawable(R.drawable.up_white_256));
             }
@@ -168,15 +172,20 @@ public class AlbumActivity extends BootstrapActivity {
             }
         });
 
-        menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        comment.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            Comment comment = comments.get(i);
-            if (comment.getChildren().size() > 0) {
-                startActivity(new Intent(AlbumActivity.this, CommentsActivity.class).putExtra(COMMENTS, comment).putExtra(OP, albumFull.getAccount_url()));
-            }
+            public void onClick(View view) {
+                new CommentDialog(AlbumActivity.this, gAlbum.getId(), null).show();
             }
         });
+
+        menu.setOnOpenedListener(new SlidingMenu.OnOpenedListener() {
+            @Override
+            public void onOpened() {
+                FlurryAgent.logEvent(Constants.Flurry.VIEW_COMMENTS);
+            }
+        });
+
     }
 
     private void getComments() {
@@ -227,6 +236,9 @@ public class AlbumActivity extends BootstrapActivity {
                 @Override
                 public void onSuccess(JSONObject response) {
                     super.onSuccess(response);
+                    if (ImageListFragment.voteMap != null) {
+                        ImageListFragment.voteMap.put(gAlbum.getId(), vote);
+                    }
                 }
 
                 @Override
@@ -243,11 +255,13 @@ public class AlbumActivity extends BootstrapActivity {
             });
         }
         else if (tokenStatus == EXPIRED_TOKEN) {
+            FlurryAgent.logEvent(Constants.Flurry.TOKEN_REFRESH_CALLED);
             ImgyApi.getAccessTokenFromRefresh(AlbumActivity.this, new JsonHttpResponseHandler() {
                 @Override
                 public void onFailure(Throwable e, JSONObject errorResponse) {
                     super.onFailure(e, errorResponse);
                     AppMsg.makeText(AlbumActivity.this, getString(R.string.general_error), AppMsg.STYLE_ALERT).show();
+                    FlurryAgent.logEvent(Constants.Flurry.TOKEN_REFRESH_FAILED);
                 }
 
                 @Override
@@ -278,6 +292,7 @@ public class AlbumActivity extends BootstrapActivity {
         switch(item.getItemId()) {
             case R.id.comments:
                 menu.toggle(true);
+                FlurryAgent.logEvent(Constants.Flurry.COMMENT_BUTTON_CLICK);
                 return true;
             case R.id.left:
                 previous();
@@ -291,9 +306,11 @@ public class AlbumActivity extends BootstrapActivity {
     }
 
     private void previous() {
+        FlurryAgent.logEvent(Constants.Flurry.PREV_BUTTON_CLICK);
         if (index != 0 ) {
             if (gallery.get(index - 1).getClass() == GalleryImage.class) {
                 startActivity(new Intent(AlbumActivity.this, ImageActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index - 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                finish();
             }
             else {
                 startActivity(new Intent(AlbumActivity.this, AlbumActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index - 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
@@ -302,9 +319,11 @@ public class AlbumActivity extends BootstrapActivity {
     }
 
     private void next() {
+        FlurryAgent.logEvent(Constants.Flurry.NEXT_BUTTON_CLICK);
         if (index != gallery.size() - 1 ) {
             if (gallery.get(index + 1).getClass() == GalleryImage.class) {
                 startActivity(new Intent(AlbumActivity.this, ImageActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index + 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                finish();
             }
             else {
                 startActivity(new Intent(AlbumActivity.this, AlbumActivity.class).putExtra(GALLERY, gallery).putExtra(INDEX, index + 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));

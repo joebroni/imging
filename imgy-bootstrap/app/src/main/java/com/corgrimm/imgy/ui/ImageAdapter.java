@@ -45,9 +45,7 @@ public class ImageAdapter extends BaseAdapter {
 
         WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        width = size.x;
+        width = display.getWidth();
 
         objectMapper = new ObjectMapper();
 

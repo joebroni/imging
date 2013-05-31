@@ -46,6 +46,18 @@ public class ImgyApi {
         ImgyRestClient.get(context, String.format("gallery/%s/%s/0.json", collection, filter), null, getGalleryResponseHandler);
     }
 
+    public static void getSubredditGallery(Context context, String subreddit, JsonHttpResponseHandler getGalleryResponseHandler) {
+
+        sharedPrefs = context.getSharedPreferences(PREFS_NAME, Activity.MODE_PRIVATE);
+
+        String filter = sharedPrefs.getString(FILTER, POPULAR);
+        if (filter.equals(POPULAR)) {
+            filter = TOP;
+        }
+
+        ImgyRestClient.get(context, String.format("gallery/r/%s/%s/0.json", subreddit, filter), null, getGalleryResponseHandler);
+    }
+
     public static void getMyImages(Context context, JsonHttpResponseHandler getGalleryResponseHandler) {
         ImgyRestClient.rawUrlGet(context, "https://api.imgur.com/3/account/me/images", null, getGalleryResponseHandler);
     }
@@ -80,6 +92,15 @@ public class ImgyApi {
 
     public static void voteForComment(Context context, Number commentId, String vote, JsonHttpResponseHandler commentVoteResponseHandler) {
         ImgyRestClient.post(context, String.format("comment/%s/vote/%s", commentId.toString(), vote), null, commentVoteResponseHandler);
+    }
+
+    public static void postComment(Context context, String imageId, String commentId, String comment, JsonHttpResponseHandler commentVoteResponseHandler) {
+        params = new RequestParams();
+        params.put("image_id", imageId);
+        params.put("comment", comment);
+        if (commentId != null)
+            params.put("parent_id", commentId);
+        ImgyRestClient.post(context, "comment", params, commentVoteResponseHandler);
     }
 
     public static void getAccessTokenFromCode(Context context, String code, AsyncHttpResponseHandler tokenResponseHandler) {

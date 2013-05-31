@@ -1,0 +1,191 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
+    <groupId>com.myfitnesspal</groupId>
+    <artifactId>slidingmenu-sherlock</artifactId>
+    <version>1.0-SNAPSHOT-nomaps</version>
+    <packaging>apklib</packaging>
+    
+    <name>SlidingMenu-Sherlock</name>
+    
+    <description>
+        SlidingMenu classes extending ActionBarSherlock classes
+    </description>
+    
+    <url>https://github.com/myfitnesspal/slidingmenu-sherlock</url>
+
+<!--     <repositories>
+        <repository>
+            <id>third.party.closed.source.repo</id>
+            <url>file://${basedir}/local_maven_repo</url>
+        </repository>
+    </repositories>
+ -->
+    <!-- 
+    <issueManagement>
+        <url>https://github.com/rtyley/roboguice-sherlock/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement> -->
+    
+    <licenses>
+        <license>
+            <name>Apache V2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
+    <scm>
+        <url>https://github.com/myfitnesspal/slidingmenu-sherlock</url>
+        <connection>scm:git:git://github.com/myfitnesspal/slidingmenu-sherlock.git</connection>
+        <developerConnection>scm:git:git@github.com:myfitnesspal/slidingmenu-sherlock.git</developerConnection>
+    </scm>
+    
+    <developers>
+        <developer>
+            <email>android-dev@myfitnesspal.com</email>
+            <name>MyFitnessPal Android Developers</name>
+            <url>https://github.com/myfitnesspal</url>
+            <id>myfitnesspal</id>
+        </developer>
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <scope>provided</scope>
+            <version>4.1.1.4</version>
+        </dependency>
+<!-- 
+        <dependency>
+            <groupId>com.slidingmenu</groupId>
+            <artifactId>slidingmenu</artifactId>
+            <version>1.2</version>
+        </dependency>
+ -->        
+        <dependency>
+            <groupId>com.actionbarsherlock</groupId>
+            <artifactId>actionbarsherlock</artifactId>
+            <version>4.2.0</version>
+            <type>apklib</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.actionbarsherlock</groupId>
+            <artifactId>actionbarsherlock</artifactId>
+            <version>4.2.0</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>support-v4</artifactId>
+            <version>r7</version>
+        </dependency>
+
+        <!-- Test suite dependencies -->
+        <dependency>
+            <groupId>com.pivotallabs</groupId>
+            <artifactId>robolectric</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <inherited>true</inherited>
+                <extensions>true</extensions>
+                <configuration>
+                    <sdk>
+                        <platform>16</platform>
+                    </sdk>
+                    <dex>
+                        <jvmArguments>
+                            <jvmArgument>-Xmx768m</jvmArgument>
+                        </jvmArguments>
+                    </dex>
+                    <zipalign>
+                        <verbose>true</verbose>
+                        <inputApk>${project.build.directory}/${project.build.finalName}.apk</inputApk>
+                        <outputApk>${project.build.directory}/${project.build.finalName}-zipaligned.apk</outputApk>
+                    </zipalign>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>alignApk</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>zipalign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+<!--     <profiles>
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>downloads-maven-plugin</artifactId>
+                        <version>0.4</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>upload</goal>
+                                </goals>
+                                <phase>deploy</phase>
+                            </execution>
+                        </executions> -->
+                        <!--
+                          This requires proper GitHub configuration in
+                          your ~/.m2/settings.xml file. See the plugin
+                          documentation for more information.
+                        -->
+<!--                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles> -->
+</project>

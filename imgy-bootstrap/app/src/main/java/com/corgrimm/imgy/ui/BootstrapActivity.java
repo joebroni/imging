@@ -2,6 +2,8 @@ package com.corgrimm.imgy.ui;
 
 import android.content.Intent;
 import com.actionbarsherlock.view.MenuItem;
+import com.corgrimm.imgy.core.Constants;
+import com.flurry.android.FlurryAgent;
 import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockActivity;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
@@ -24,5 +26,19 @@ public abstract class BootstrapActivity extends RoboSherlockActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        FlurryAgent.onStartSession(this, Constants.Flurry.FLURRY_API_KEY);
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
     }
 }

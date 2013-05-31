@@ -116,6 +116,7 @@ public class Constants {
 
         public static final String NEWEST = "time";
         public static final String POPULAR = "viral";
+        public static final String TOP = "top";
 
         public static final String AUTH_TOKEN = "auth_token";
         public static final String REFRESH_TOKEN = "refresh_token";
@@ -123,6 +124,7 @@ public class Constants {
 
         public static final String COLLECTION = "collection";
         public static final String FILTER = "filter";
+        public static final String SUBREDDIT = "subreddit";
 
     }
 
@@ -155,6 +157,38 @@ public class Constants {
         public static final int TIMER_NOTIFICATION_ID = 1000; // Why 1000? Why not? :)
     }
 
+    public static class Flurry {
+
+        private Flurry() {}
+
+        public static final String FLURRY_API_KEY = "B2FMSXCPVW63R5MMPC4T";
+
+        public static final String VIEW_GALLERY = "ViewGallery";
+        public static final String VIEW_MY_IMAGES = "ViewMyImages";
+        public static final String VIEW_MY_ALBUMS = "ViewMyAlbums";
+        public static final String UPLOAD_IMAGE = "UploadImage";
+        public static final String REFRESH_GALLERY = "RefreshGallery";
+        public static final String FILTER_BUTTON_CLICKED = "FilterButtonClick";
+        public static final String GALLERY_ITEM_ClICK = "GalleryItemClick";
+        public static final String UP_VOTE = "Upvote";
+        public static final String DOWN_VOTE = "Downvote";
+        public static final String VIEW_COMMENTS = "ViewComments";
+        public static final String COMMENT_EXPAND = "CommentExpand";
+        public static final String COMMENT_BUTTON_CLICK = "CommentButtonClick";
+        public static final String NEXT_BUTTON_CLICK = "NextButtonClick";
+        public static final String PREV_BUTTON_CLICK = "PreviousButtonClick";
+        public static final String IMAGE_UPLOAD_FAILURE = "ImageUploadFailed";
+        public static final String LOGIN_FAILURE = "LoginFailed";
+        public static final String TOKEN_REFRESH_CALLED = "TokenRefreshCalled";
+        public static final String TOKEN_REFRESH_FAILED = "TokenRefreshFailed";
+        public static final String VIRAL_CLICKED = "ViralClicked";
+        public static final String SCORE_CLICKED = "ScoreClicked";
+        public static final String USER_CLICKED = "UserSubmittedClicked";
+        public static final String NEWEST_CLICKED = "NewestClicked";
+        public static final String POPULAR_CLICKED = "PopularityClicked";
+        public static final String SUBREDDIT = "Subreddit";
+        public static final String NEW_COMMENT_SUBMITTED = "NewCommentSubmitted";
+    }
 }
 
 
